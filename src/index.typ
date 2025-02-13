@@ -1,26 +1,36 @@
 
-#import "/typ/templates/html-toolkit.typ": load-html-template
+#import "mod.typ": *
 
 #let is-preview = sys.inputs.at("x-preview", default: none) != none
 
+#show: template
 #show: load-html-template.with(if is-preview {
-  "template.html"
+  "/src/template.html"
 } else {
-  "template.prod.html"
+  "/src/template.html"
 })
 
 
-#let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
+#main-title[
+  Broadsheet
+][
+  The recent changes about typst.
+]
 
-#show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
+#news-list({
+  news-item("2021-09-01", "PR #5779 Modular, multi-threaded, transitioning plugins", ("pr",))[
+    This PR adds changes about the WASM plugins to allow fork state of plugin by calling mutable plugin functions.
+  ]
+  news-item("2021-09-01", "PR #5773 Resolve bound name of bare import statically", ("pr",))[
+    This PR forbids inwarranted dynamic imports, making imported names of modules determined at syntax stage.
+  ]
+})
+
 
 #html.elem(
   "div",
   attrs: ("class": "container"),
   [
-    #html.elem("h2")[
-      Personal Information
-    ]
 
     An equation:
 
@@ -33,12 +43,6 @@
     $
       integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x
     $
-
-    #table(
-      columns: 2,
-      "1", "2",
-      "3", "4",
-    )
   ],
 )
 

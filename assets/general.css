@@ -1,0 +1,60 @@
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    color: rgba(235, 235, 235, 0.9);
+    font-family: 'Geist', sans-serif;
+    /* font-family: 'GeistSans', sans-serif;
+    font-size: 16px;
+    background-color: #000; */
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: rgb(241, 245, 249);
+}
+
+h1.main-title {
+    margin: 0.67em 0 0.5em 0;
+    line-height: 1;
+}
+
+body {
+    background-color: rgb(21, 21, 21);
+    margin: 0 10vw;
+}
+
+.title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 2em;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.main-description {
+    color: rgba(235, 235, 235, 0.6);
+}
+
+.news-list {
+    margin: 60px 0;
+}
+
+.news-item {
+    margin: 40px 0;
+}
+
+.news-title {
+    font-size: 24px;
+    text-decoration: underline;
+}

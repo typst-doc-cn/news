@@ -12,7 +12,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/build.mjs --dev",
-    "serve": "npx http-server dist -p 14133"
+    "serve": "npx http-server -p 14133"
   },
   "devDependencies": {
     "@myriaddreamin/typst-ts-node-compiler": "=0.5.4",
