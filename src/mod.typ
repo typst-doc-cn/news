@@ -5,6 +5,14 @@
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
 
+  let is-preview = sys.inputs.at("x-preview", default: none) != none
+
+  show: load-html-template.with(if is-preview {
+    "/src/template.html"
+  } else {
+    "/src/template.html"
+  })
+
   content
 }
 
@@ -29,15 +37,13 @@
 }
 
 #let news-item(date, title, tags, content) = {
-  let item = (
+  add-rss-feed((
     kind: "news-item",
     date: date,
     title: title,
     tags: tags,
     content: content,
-  )
-
-  add-rss-feed(item)
+  ))
   div(
     class: "news-item",
     {

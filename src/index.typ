@@ -1,15 +1,7 @@
 
 #import "mod.typ": *
 
-#let is-preview = sys.inputs.at("x-preview", default: none) != none
-
 #show: template
-#show: load-html-template.with(if is-preview {
-  "/src/template.html"
-} else {
-  "/src/template.html"
-})
-
 
 #main-title[
   Broadsheet
@@ -26,23 +18,14 @@
   ]
 })
 
+An equation:
 
-#html.elem(
-  "div",
-  attrs: ("class": "container"),
-  [
+$
+  integral f(x) dif x
+$
 
-    An equation:
+An equation that is scrolled horizontally:
 
-    $
-      integral f(x) dif x
-    $
-
-    An equation that is scrolled horizontally:
-
-    $
-      integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x
-    $
-  ],
-)
-
+$
+  integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x
+$
