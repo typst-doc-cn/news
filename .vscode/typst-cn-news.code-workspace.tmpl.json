@@ -1,0 +1,22 @@
+{
+  "$schema": "vscode://schemas/workspaceConfig",
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "[html]": {
+      "editor.suggest.insertMode": "replace",
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[xml]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "tinymist.exportTarget": "html"
+  }
+}

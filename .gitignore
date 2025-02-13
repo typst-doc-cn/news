@@ -1,3 +1,5 @@
-dist/
-target/
+/.vscode/typst-cn-news.code-workspace
+/node_modules/
+/dist/
+/target/
 .DS_Store
