@@ -1,40 +1,33 @@
-// typst watch --root . src/index.typ --features html dist/index.html
-
-import child_process from "child_process";
 import fs from "fs";
 import { generateNewsList } from "./generate-news-list.mjs";
 import watch from "glob-watcher";
 import { dirname } from "path";
-
-const previousProcesses = [];
+import { NodeCompiler } from "@myriaddreamin/typst-ts-node-compiler";
 
 const isDev = process.argv.includes("--dev");
 
-const typstRun = (src, dst) =>
-  child_process.spawn(
-    "typst",
-    [
-      isDev ? "watch" : "compile",
-      "--root",
-      ".",
-      src,
-      "--diagnostic-format",
-      "short",
-      "--features",
-      "html",
-      dst,
-    ],
-    {
-      stdio: "inherit",
-    }
-  );
+const compiler = NodeCompiler.create({
+  workspace: ".",
+});
 
-const killPreviousProcesses = () => {
-  for (const process of previousProcesses) {
-    process.kill();
+// isDev ? "watch" : "compile",
+// "--diagnostic-format",
+// "short",
+
+const typstRun = (src, dst) => {
+  try {
+    const htmlContent = compiler.html({
+      mainFilePath: src,
+    });
+
+    fs.writeFileSync(dst, htmlContent);
+  } catch (e) {
+    console.error(e);
+    return;
   }
-  previousProcesses.splice(0, previousProcesses.length);
 };
+
+const killPreviousProcesses = () => {};
 
 const build = () => {
   killPreviousProcesses();
@@ -49,16 +42,16 @@ const build = () => {
 
   for (const news of meta) {
     if (news.content.en) {
-      previousProcesses.push(typstContentWatch(news.content.en));
+      typstContentWatch(news.content.en);
     }
     if (news.content["zh-CN"]) {
-      previousProcesses.push(typstContentWatch(news.content["zh-CN"]));
+      typstContentWatch(news.content["zh-CN"]);
     }
   }
 
   const indexSrc = "src/index.typ";
   const indexDst = "dist/index.html";
-  previousProcesses.push(typstRun(indexSrc, indexDst));
+  typstRun(indexSrc, indexDst);
 };
 
 if (isDev) {
@@ -67,11 +60,4 @@ if (isDev) {
   watcher.on("remove", build);
 } else {
   build();
-  for (const process of previousProcesses) {
-    process.on("exit", (code) => {
-      if (code !== 0) {
-        process.exit(code);
-      }
-    });
-  }
 }
