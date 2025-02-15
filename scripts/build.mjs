@@ -9,72 +9,42 @@ import {
   ProjectWatcher,
 } from "@myriaddreamin/typst-ts-node-compiler";
 
+/**
+ * Watches the project if the `--dev` flag is present
+ */
 const isDev = process.argv.includes("--dev");
 
+/**
+ * The flag for indicating whether there is any error during the build process
+ */
 let hasError = false;
 
-let _compiler = undefined;
-/**
- *
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
- */
-const compiler = () =>
-  (_compiler ||= NodeCompiler.create({
-    workspace: ".",
-  }));
-let _watcher = undefined;
-/**
- *
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
- */
-const watcher = () =>
-  (_watcher ||= ProjectWatcher.create({
-    workspace: ".",
-  }));
+const main = () => {
+  if (isDev) {
+    const watcher = watch(["content/{en,zh-CN}/news/**/*.typ"]);
+    watcher.on("add", reload);
+    watcher.on("remove", reload);
 
-let killPreviousProcesses = () => {
-  watcher().clear();
-};
-
-/**
- * @param {string} src
- * @param {string} dst
- */
-const compile = (src, dst) => {
-  /**
-   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
-   */
-  return (compiler) => {
-    const htmlResult = compiler.mayHtml({ mainFilePath: src });
-
-    hasError = hasError || htmlResult.hasError();
-    htmlResult.printErrors();
-    const htmlContent = htmlResult.result;
-    if (htmlContent?.length !== undefined) {
-      fs.writeFileSync(dst, htmlContent);
-      console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
-      watcher().evictCache(30);
+    // The first reload.
+    reload();
+  } else {
+    reload();
+    if (hasError) {
+      process.exit(1);
     }
-  };
-};
-
-const typstRun = (src, dst) => {
-  try {
-    if (isDev) {
-      watcher().add([src], compile(src, dst));
-    } else {
-      compile(src, dst)(compiler());
-    }
-  } catch (e) {
-    console.error(e);
-    return;
   }
 };
 
-const build = () => {
-  killPreviousProcesses();
+/**
+ * Reloads and builds the project
+ */
+const reload = () => {
+  killPreviousTasks();
   const meta = generateNewsList();
 
+  /**
+   * @param {string} src
+   */
   const typstContentWatch = (src) => {
     const dst = src.replace("content/", "dist/").replace(".typ", ".html");
     const dstDir = dirname(dst);
@@ -100,15 +70,72 @@ const build = () => {
   }
 };
 
-if (isDev) {
-  const watcher = watch(["content/{en,zh-CN}/news/**/*.typ"]);
-  watcher.on("add", build);
-  watcher.on("remove", build);
+/**
+ * Lazily created compiler and watcher
+ */
+let _compiler = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
+ */
+const compiler = () =>
+  (_compiler ||= NodeCompiler.create({
+    workspace: ".",
+  }));
+let _watcher = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
+ */
+const watcher = () =>
+  (_watcher ||= ProjectWatcher.create({
+    workspace: ".",
+  }));
 
-  build();
-} else {
-  build();
-  if (hasError) {
-    process.exit(1);
+/**
+ * Kills the previous tasks
+ */
+let killPreviousTasks = () => {
+  watcher().clear();
+};
+
+/**
+ * @param {string} src
+ * @param {string} dst
+ */
+const compile = (src, dst) => {
+  /**
+   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
+   */
+  return (compiler) => {
+    const htmlResult = compiler.mayHtml({ mainFilePath: src });
+
+    hasError = hasError || htmlResult.hasError();
+    htmlResult.printErrors();
+    const htmlContent = htmlResult.result;
+    if (htmlContent?.length !== undefined) {
+      fs.writeFileSync(dst, htmlContent);
+      console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
+      watcher().evictCache(30);
+    }
+  };
+};
+
+/**
+ * @param {string} src
+ * @param {string} dst
+ */
+const typstRun = (src, dst) => {
+  try {
+    if (isDev) {
+      watcher().add([src], compile(src, dst));
+    } else {
+      compile(src, dst)(compiler());
+    }
+  } catch (e) {
+    console.error(e);
+    return;
   }
-}
+};
+
+main();
