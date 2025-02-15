@@ -1,22 +1,6 @@
 
 #import "/typ/templates/html-toolkit.typ": *
 
-#let template(content) = {
-  show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
-  show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
-
-  let is-preview = sys.inputs.at("x-preview", default: none) != none
-
-  show: load-html-template.with(if is-preview {
-    "/src/template.html"
-  } else {
-    "/src/template.html"
-  })
-
-  content
-}
-
-
 #let main-title(title, description) = {
   div(
     class: "title-container",
@@ -29,6 +13,8 @@
 
 #let add-rss-feed(item) = none
 
+#let news-data = json.decode(read("/content/meta/news-list.json"))
+
 #let news-list(news) = {
   div(
     class: "news-list",
@@ -36,23 +22,36 @@
   )
 }
 
-#let news-item(date, title, tags, content) = {
+#let news-item(item) = {
+  let (date, title, description) = item
+  let tags = ("PR",)
+
+  let href = item.content.en.replace("content/", "/dist/").replace(".typ", ".html")
+
   add-rss-feed((
     kind: "news-item",
-    date: date,
-    title: title,
-    tags: tags,
-    content: content,
+    data: item,
   ))
   div(
     class: "news-item",
     {
-      // div(class: "news-date", date)
-      h2(class: "news-title", title)
-      // div(class: "news-tags", tags)
-      div(class: "news-content", content)
+      h2(
+        class: "news-title",
+        a(href: href, title),
+      )
 
-      div("Read more...")
+      div(
+        class: "news-prop",
+        {
+          "Published At: "
+          item.date
+          "  "
+          "Tags: "
+          tags.join(", ")
+        },
+      )
+      // div(class: "news-tags", tags)
+      div(class: "news-description", description)
     },
   )
 }

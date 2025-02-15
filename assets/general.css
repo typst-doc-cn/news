@@ -56,5 +56,19 @@ body {
 
 .news-title {
     font-size: 24px;
-    text-decoration: underline;
+    margin: 0;
+}
+
+.news-title a {
+    color: rgba(235, 235, 235, 0.9);
+}
+
+.news-title a:hover {
+    color: rgba(235, 235, 235, 1);
+}
+
+.news-prop {
+    color: rgba(235, 235, 235, 0.4);
+    font-size: 12px;
+    margin-bottom: 12px;
 }

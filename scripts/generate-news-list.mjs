@@ -19,8 +19,19 @@ export const generateNewsList = () => {
   for (const newsId of newsList) {
     const id = newsId.replace(".typ", "");
     const newsPath = `${newsDir}/${newsId}`;
+
+    const newsContent = fs.readFileSync(newsPath, "utf-8");
+
+    // Todo: extract these information by typst query
+    const title = newsContent.match(/title: "(.*?)"/)[1];
+    const date = newsContent.match(/date: "(.*?)"/)[1];
+    const description = newsContent.match(/description: "(.*?)"/)[1];
+
     newsListJson.push({
       id,
+      title,
+      date,
+      description,
       content: {
         en: newsPath,
         [`zh-CN`]: newsPath.replace("content/en", "content/zh-CN"),
