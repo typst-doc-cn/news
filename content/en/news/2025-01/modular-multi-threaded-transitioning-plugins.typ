@@ -14,5 +14,3 @@ news-template now has no specialized plugin type. `plugin(...) ` will return `mo
 news-template now supports multi-threaded running of plugins, which is done automatically without any manual action on the part of the user.
 news-template provides a new plugin.transition API for executing non-pure functions. If you don't use transition to call non-pure functions, it may lead to unpredictable results.
 lead to unpredictable results.
-
-Translated with DeepL.com (free version)

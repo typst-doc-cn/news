@@ -8,4 +8,3 @@
   description: none,
   content,
 ) = content
-

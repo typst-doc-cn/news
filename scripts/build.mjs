@@ -1,33 +1,75 @@
+// @ts-check
+
 import fs from "fs";
 import { generateNewsList } from "./generate-news-list.mjs";
 import watch from "glob-watcher";
 import { dirname } from "path";
-import { NodeCompiler } from "@myriaddreamin/typst-ts-node-compiler";
+import {
+  NodeCompiler,
+  ProjectWatcher,
+} from "@myriaddreamin/typst-ts-node-compiler";
 
 const isDev = process.argv.includes("--dev");
 
-const compiler = NodeCompiler.create({
-  workspace: ".",
-});
+let hasError = false;
 
-// isDev ? "watch" : "compile",
-// "--diagnostic-format",
-// "short",
+let _compiler = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
+ */
+const compiler = () =>
+  (_compiler ||= NodeCompiler.create({
+    workspace: ".",
+  }));
+let _watcher = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
+ */
+const watcher = () =>
+  (_watcher ||= ProjectWatcher.create({
+    workspace: ".",
+  }));
+
+let killPreviousProcesses = () => {
+  watcher().clear();
+};
+
+/**
+ * @param {string} src
+ * @param {string} dst
+ */
+const compile = (src, dst) => {
+  /**
+   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
+   */
+  return (compiler) => {
+    const htmlResult = compiler.mayHtml({ mainFilePath: src });
+
+    hasError = hasError || htmlResult.hasError();
+    htmlResult.printErrors();
+    const htmlContent = htmlResult.result;
+    if (htmlContent?.length !== undefined) {
+      fs.writeFileSync(dst, htmlContent);
+      console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
+      watcher().evictCache(30);
+    }
+  };
+};
 
 const typstRun = (src, dst) => {
   try {
-    const htmlContent = compiler.html({
-      mainFilePath: src,
-    });
-
-    fs.writeFileSync(dst, htmlContent);
+    if (isDev) {
+      watcher().add([src], compile(src, dst));
+    } else {
+      compile(src, dst)(compiler());
+    }
   } catch (e) {
     console.error(e);
     return;
   }
 };
-
-const killPreviousProcesses = () => {};
 
 const build = () => {
   killPreviousProcesses();
@@ -52,12 +94,21 @@ const build = () => {
   const indexSrc = "src/index.typ";
   const indexDst = "dist/index.html";
   typstRun(indexSrc, indexDst);
+
+  if (isDev) {
+    watcher().watch();
+  }
 };
 
 if (isDev) {
   const watcher = watch(["content/{en,zh-CN}/news/**/*.typ"]);
   watcher.on("add", build);
   watcher.on("remove", build);
+
+  build();
 } else {
   build();
+  if (hasError) {
+    process.exit(1);
+  }
 }
