@@ -23,6 +23,9 @@ concurrency:
 jobs:
   deploy-cf:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
