@@ -12,16 +12,14 @@
 ) = {
   set document(title: title, description: description)
 
-  template({
+  base-template({
     h1(class: "main-title", title)
     div(
       class: "news-prop",
       {
-        "Published At: "
-        date
+        "Published At: " + date
         "  "
-        "Tags: "
-        tags.join(", ")
+        "Tags: " + tags.join(", ")
       },
     )
     content

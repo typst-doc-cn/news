@@ -34,30 +34,24 @@
 #load-html-template("/src/template.html", [])
 
 
-#let class-it(content, ..attrs, tag: "div") = html.elem(
+#let html-elem(content, ..attrs, tag: "div") = html.elem(
   tag,
   content,
   attrs: attrs.named(),
 )
 
-#let a = class-it.with(tag: "a")
-#let div = class-it.with(tag: "div")
-#let h1 = class-it.with(tag: "h1")
-#let h2 = class-it.with(tag: "h2")
+#let a = html-elem.with(tag: "a")
+#let div = html-elem.with(tag: "div")
+#let h1 = html-elem.with(tag: "h1")
+#let h2 = html-elem.with(tag: "h2")
 
 #let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
 
-#let template(content) = {
+#let base-template(content) = {
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
 
-  let is-preview = sys.inputs.at("x-preview", default: none) != none
-
-  show: load-html-template.with(if is-preview {
-    "/src/template.html"
-  } else {
-    "/src/template.html"
-  })
+  show: load-html-template.with("/src/template.html")
 
   content
 }

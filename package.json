@@ -17,7 +17,7 @@
     "serve": "npx http-server -p 14133"
   },
   "devDependencies": {
-    "@myriaddreamin/typst-ts-node-compiler": "=0.5.4",
+    "@myriaddreamin/typst-ts-node-compiler": "=0.5.5-rc2",
     "@types/node": "16.7.13",
     "glob-watcher": "^6.0.0",
     "http-server": "14.1.1"

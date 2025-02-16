@@ -1,7 +1,7 @@
 
 #import "mod.typ": *
 
-#show: template
+#show: base-template
 
 #main-title[
   Broadsheet
