@@ -76,6 +76,8 @@ jobs:
       - name: Copy Static Assets
         run: |
           cp -r ./assets/ ./dist
+          ls .
+          ls ./dist/news || ls ./dist
       - name: Fix links
         run: |
           find ./dist -type f -name '*.html' -exec sed -i 's/href="\/dist/href="\/news/g' {} \;
