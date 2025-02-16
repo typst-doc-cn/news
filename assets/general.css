@@ -22,6 +22,7 @@ h1.main-title {
 }
 
 body {
+    display: block !important;
     background-color: rgb(21, 21, 21);
     margin: 0 10vw;
 }
@@ -31,7 +32,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 2em;
 }
 
 .title {
@@ -71,4 +71,23 @@ body {
     color: rgba(235, 235, 235, 0.4);
     font-size: 12px;
     margin-bottom: 12px;
+}
+
+.icon-button {
+    color: rgba(235, 235, 235, 0.9);
+}
+
+.main-body {
+    min-height: calc(100vh - 128px);
+    padding-top: 4em;
+}
+
+.main-header {
+    padding: 24px 16px;
+    text-align: center;
+}
+
+.main-footer {
+    padding: 64px 16px;
+    text-align: center;
 }

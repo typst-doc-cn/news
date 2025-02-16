@@ -13,7 +13,27 @@
       href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/assets/general.css" />
+    <link
+      rel="preload"
+      as="style"
+      href="/assets/general.css"
+      onload="this.rel='stylesheet'"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: rgba(235, 235, 235, 0.9);
+        font-family: "Geist", sans-serif;
+      }
+
+      body {
+        display: none;
+        background-color: rgb(21, 21, 21);
+        margin: 0 10vw;
+      }
+    </style>
 
     <title>Typst Broadsheet</title>
   </head>
