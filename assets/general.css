@@ -22,6 +22,7 @@ h1.main-title {
 }
 
 body {
+    display: block !important;
     background-color: rgb(21, 21, 21);
     margin: 0 10vw;
 }
