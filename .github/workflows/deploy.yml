@@ -76,10 +76,10 @@ jobs:
       - name: Copy Static Assets
         run: |
           cp -r ./assets/ ./dist
-          ls .
-          ls ./dist/news || ls ./dist
+          find ./dist -type f -name '*.html'
       - name: Fix links
         run: |
+          cat ./dist/index.html
           find ./dist -type f -name '*.html' -exec sed -i 's/href="\/dist/href="\/news/g' {} \;
           find ./dist -type f -name '*.html' -exec sed -i 's/src="\/dist/src="\/news/g' {} \;
       - name: Deploy to Vercel
