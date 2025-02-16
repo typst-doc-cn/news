@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-gh-pages:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
