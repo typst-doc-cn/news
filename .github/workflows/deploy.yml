@@ -42,7 +42,9 @@ jobs:
       - name: Build
         run: npm run build
       - name: Copy Static Assets
-        run: cp -r ./assets/ ./dist
+        run: |
+          mkdir ./dist/dist
+          cp -r ./assets/ ./dist/dist
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
@@ -69,7 +71,9 @@ jobs:
       - name: Build
         run: npm run build -- --url-base=/news/
       - name: Copy Static Assets
-        run: cp -r ./assets/ ./dist
+        run: |
+          mkdir ./dist/dist
+          cp -r ./assets/ ./dist/dist
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
