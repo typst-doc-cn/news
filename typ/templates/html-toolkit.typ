@@ -3,6 +3,19 @@
 #let url-base = if assets-url-base != none { assets-url-base } else { "/dist/" }
 #let assets-url-base = if assets-url-base != none { assets-url-base } else { "/" }
 
+#let news-data = json(bytes(read("/content/meta/news-list.json")))
+
+#let current-title = state("cn-news-title", "")
+
+#let news-item() = {
+  let title = current-title.get()
+  news-data.find(item => item.title == title)
+}
+
+#let news-link(src) = {
+  src.replace("content/", url-base).replace(".typ", ".html")
+}
+
 #let asset-url(path) = {
   if path != none and path.starts-with("/") {
     assets-url-base + path.slice(1)
@@ -62,30 +75,69 @@
 
 #let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
 
-#let header = {
+#let fa-icon(path, ..attrs) = a(
+  class: "icon-button",
+  ..attrs,
+  {
+    div(
+      style: {
+        "flex: 24px; width: 24px; height: 24px; background: currentColor; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; mask-image: url(\""
+        asset-url(path)
+        "\"); "
+        "-webkit-mask-image: url(\""
+        asset-url(path)
+        "\");"
+      },
+      "",
+    )
+  },
+)
+
+#let header(go-back: none) = {
   div(
     class: "main-header",
     {
-      span(
-        style: "float: right;",
-        // filter with currentColor
-        a(
-          class: "icon-button",
-          href: "https://github.com/typst-doc-cn/news",
-          {
-            div(
-              style: {
-                "width: 24px; height: 24px; background: currentColor; mask-image: url(\""
-                asset-url("/assets/fa-github.svg")
-                "\"); "
-                "-webkit-mask-image: url(\""
-                asset-url("/assets/fa-github.svg")
-                "\");"
-              },
-              "",
-            )
+      div(
+        style: "display: flex; flex-direction: row; gap: 8px;",
+        {
+          if go-back != none {
+            fa-icon("/assets/fa-arrow-left.svg", title: "Go Back", href: go-back)
+          }
+        },
+      )
+      div(
+        style: "display: flex; flex-direction: row-reverse; gap: 8px;",
+        (
+          fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news"),
+          fa-icon("/assets/fa-moon.svg", title: "Change to Light Theme"),
+          context {
+            let item = news-item()
+
+            if item != none {
+              let lang = text.lang
+              let region = text.region
+
+              let locale = if region != none {
+                lang + "-" + region
+              } else {
+                lang
+              }
+
+              let keys = item.content.keys()
+
+              if keys.len() > 1 {
+                let index = keys.position(it => it == locale)
+                let next-index = calc.rem(index + 1, keys.len())
+                let next-locale = keys.at(next-index)
+
+                let goal-href = item.content.at(next-locale)
+                if goal-href != none {
+                  a(class: "top-text-button", title: "Switch Language", href: news-link(goal-href), locale)
+                }
+              }
+            }
           },
-        ),
+        ).join(),
       )
     },
   )
@@ -105,13 +157,14 @@
 }
 
 
-#let base-template(content) = {
+#let base-template(pre-header: none, go-back: none, content) = {
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
 
   show: load-html-template.with("/src/template.html")
 
-  header
+  pre-header
+  header(go-back: go-back)
   div(class: "main-body", content)
   footer
 }

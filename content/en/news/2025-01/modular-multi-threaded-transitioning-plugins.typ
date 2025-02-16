@@ -4,6 +4,7 @@
 #show: news-template.with(
   date: "2021-09-01",
   title: "PR #5779 Modular, multi-threaded, transitioning plugins",
+  lang: "en",
   tags: ("pr",),
   description: "This PR adds changes about the WASM plugins to allow fork state of plugin by calling mutable plugin functions.",
 )

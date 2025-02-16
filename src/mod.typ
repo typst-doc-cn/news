@@ -13,7 +13,7 @@
 
 #let add-rss-feed(item) = none
 
-#let news-data = json.decode(read("/content/meta/news-list.json"))
+#let news-data = json(bytes(read("/content/meta/news-list.json")))
 
 #let news-list(news) = {
   div(
