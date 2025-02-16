@@ -21,7 +21,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  deploy-cf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Set Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install packages
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - name: Build
+        run: npm run build
+      - name: Copy Static Assets
+        run: cp -r ./assets/ ./dist
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: typst-doc-cn-news
+          directory: "./dist"
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  deploy-vercel:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -40,11 +67,7 @@ jobs:
         run: npm run build -- --url-base=/news/
       - name: Copy Static Assets
         run: cp -r ./assets/ ./dist
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: typst-doc-cn-news
-          directory: "./dist"
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel --prod --token $VERCEL_TOKEN
