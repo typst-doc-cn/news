@@ -8,6 +8,12 @@
       data
     }
   } else {
+    let href = data.attrs.at("href", default: none)
+    if href != none and href.starts-with("/") {
+      href = url-base + href.slice(1)
+      data.attrs.at("href") = href
+    }
+
     html.elem(
       data.tag,
       attrs: data.attrs,
@@ -32,9 +38,6 @@
     },
   )
 }
-
-#load-html-template("/src/template.html", [])
-
 
 #let html-elem(content, ..attrs, tag: "div") = html.elem(
   tag,
