@@ -26,7 +26,7 @@
   let (date, title, description) = item
   let tags = ("PR",)
 
-  let href = item.content.en.replace("content/", "/dist/").replace(".typ", ".html")
+  let href = item.content.en.replace("content/", url-base).replace(".typ", ".html")
 
   add-rss-feed((
     kind: "news-item",

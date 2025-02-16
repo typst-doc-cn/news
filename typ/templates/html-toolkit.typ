@@ -1,4 +1,6 @@
 
+#let url-base = sys.inputs.at("x-url-base", default: "/dist/")
+
 #let to-html(data) = {
   if type(data) == str {
     let data = data.trim()

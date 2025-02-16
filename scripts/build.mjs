@@ -13,6 +13,25 @@ import {
  * Watches the project if the `--dev` flag is present
  */
 const isDev = process.argv.includes("--dev");
+// x-url-base
+const urlBase = [process.argv.find((arg) => arg.startsWith("--url-base="))]
+  .map((arg) => {
+    if (arg) {
+      return arg.split("=")[1];
+    }
+    return undefined;
+  })[0];
+
+/**
+ * The arguments for the compiler
+ * 
+ * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
+ */
+const compileArgs = {
+  workspace: ".",
+  ...(urlBase ? { inputs: { 'x-url-base': urlBase } } : {}),
+};
+
 
 /**
  * The flag for indicating whether there is any error during the build process
@@ -79,18 +98,14 @@ let _compiler = undefined;
  * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
  */
 const compiler = () =>
-  (_compiler ||= NodeCompiler.create({
-    workspace: ".",
-  }));
+  (_compiler ||= NodeCompiler.create(compileArgs));
 let _watcher = undefined;
 /**
  *
  * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
  */
 const watcher = () =>
-  (_watcher ||= ProjectWatcher.create({
-    workspace: ".",
-  }));
+  (_watcher ||= ProjectWatcher.create(compileArgs));
 
 /**
  * Kills the previous tasks
