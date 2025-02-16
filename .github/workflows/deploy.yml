@@ -43,8 +43,11 @@ jobs:
         run: npm run build
       - name: Copy Static Assets
         run: |
-          mkdir ./dist/dist
-          cp -r ./assets/ ./dist/dist
+          cp -r ./assets/ ./dist
+      - name: Fix links
+        run: |
+          find ./dist -type f -name '*.html' -exec sed -i 's/href="\/dist/href="/g' {} \;
+          find ./dist -type f -name '*.html' -exec sed -i 's/src="\/dist/src="/g' {} \;
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
@@ -72,8 +75,11 @@ jobs:
         run: npm run build -- --url-base=/news/
       - name: Copy Static Assets
         run: |
-          mkdir ./dist/dist
-          cp -r ./assets/ ./dist/dist
+          cp -r ./assets/ ./dist
+      - name: Fix links
+        run: |
+          find ./dist -type f -name '*.html' -exec sed -i 's/href="\/dist/href="\/news/g' {} \;
+          find ./dist -type f -name '*.html' -exec sed -i 's/src="\/dist/src="\/news/g' {} \;
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
