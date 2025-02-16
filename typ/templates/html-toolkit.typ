@@ -148,10 +148,10 @@
     class: "main-footer",
     {
       "© 2023-2025 "
-      a({ "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
+      a(class: "text-link", { "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
       " All Rights Reserved. "
       "Powered by "
-      a(" Typst.", href: "https://github.com/typst/typst")
+      a(class: "text-link", " Typst.", href: "https://github.com/typst/typst")
     },
   )
 }

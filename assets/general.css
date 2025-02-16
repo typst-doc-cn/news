@@ -109,3 +109,7 @@ body {
     width: 52px;
     text-align: center;
 }
+
+.text-link {
+    color: rgba(235, 235, 235, 0.9);
+}
