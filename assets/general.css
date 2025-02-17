@@ -73,21 +73,43 @@ body {
     margin-bottom: 12px;
 }
 
+.news-body {
+    text-align: justify;
+}
+
 .icon-button {
     color: rgba(235, 235, 235, 0.9);
 }
 
 .main-body {
     min-height: calc(100vh - 128px);
-    padding-top: 4em;
 }
 
 .main-header {
-    padding: 24px 16px;
+    padding: 24px 0;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 .main-footer {
     padding: 64px 16px;
     text-align: center;
+}
+
+.top-text-button {
+    line-height: 20px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin-right: 4px;
+    color: rgba(235, 235, 235, 0.9);
+    text-decoration: none;
+    width: 52px;
+    text-align: center;
+}
+
+.text-link {
+    color: rgba(235, 235, 235, 0.9);
 }

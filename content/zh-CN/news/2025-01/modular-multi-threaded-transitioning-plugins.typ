@@ -4,6 +4,8 @@
 #show: news-template.with(
   date: "2021-09-01",
   title: "PR #5779 Modular, multi-threaded, transitioning plugins",
+  lang: "zh",
+  region: "CN",
   tags: ("pr",),
   description: "此 PR 增加了对 WASM 插件的修改，允许通过调用可变插件函数来 fork 插件状态。",
 )
