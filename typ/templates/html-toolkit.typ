@@ -158,6 +158,9 @@
 
 
 #let base-template(pre-header: none, go-back: none, content) = {
+  // todo: remove it after the bug is fixed
+  show raw.where(block: false): it => html.elem("code", it.text)
+
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
 
