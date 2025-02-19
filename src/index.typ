@@ -1,7 +1,7 @@
 
 #import "mod.typ": *
 
-#show: base-template
+#show: base-template.with(description: "The recent changes about typst.")
 
 #main-title[
   Broadsheet

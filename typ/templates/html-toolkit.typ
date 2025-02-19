@@ -1,5 +1,6 @@
 
 #import "@preview/tiaoma:0.2.1"
+#import "supports-text.typ": *
 
 #let assets-url-base = sys.inputs.at("x-url-base", default: none)
 #let url-base = if assets-url-base != none { assets-url-base } else { "/dist/" }
@@ -48,7 +49,7 @@
 
 #let load-html-template(template-path, content) = {
   let head-data = xml(template-path).at(0).children.at(1)
-  let head = to-html(head-data)
+  let head = to-html(head-data).body
 
   html.elem(
     "html",
@@ -57,7 +58,21 @@
       "xmlns": "http://www.w3.org/1999/xhtml",
     ),
     {
-      head
+      html.elem(
+        "head",
+        {
+          head
+          context if document.description != none {
+            html.elem(
+              "meta",
+              attrs: (
+                "name": "description",
+                "content": plain-text(document.description),
+              ),
+            )
+          }
+        },
+      )
       html.elem("body", content)
     },
   )
@@ -196,12 +211,14 @@
 }
 
 
-#let base-template(pre-header: none, go-back: none, content) = {
+#let base-template(pre-header: none, go-back: none, description: none, content) = {
   // todo: remove it after the bug is fixed
   show raw.where(block: false): it => html.elem("code", it.text)
 
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%))
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
+
+  set document(description: description) if description != none
 
   show: load-html-template.with("/src/template.html")
 
