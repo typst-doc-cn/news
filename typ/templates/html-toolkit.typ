@@ -1,4 +1,6 @@
 
+#import "@preview/tiaoma:0.2.1"
+
 #let assets-url-base = sys.inputs.at("x-url-base", default: none)
 #let url-base = if assets-url-base != none { assets-url-base } else { "/dist/" }
 #let assets-url-base = if assets-url-base != none { assets-url-base } else { "/" }
@@ -75,8 +77,12 @@
 
 #let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
 
-#let fa-icon(path, content: "", ..attrs) = a(
-  class: "icon-button",
+#let fa-icon(path, content: none, class: none, ..attrs) = a(
+  class: "icon-button"
+    + if class != none {
+      " "
+      class
+    },
   ..attrs,
   {
     div(
@@ -88,8 +94,9 @@
         asset-url(path)
         "\");"
       },
-      content,
+      "",
     )
+    content
   },
 )
 
@@ -110,7 +117,38 @@
         (
           fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news"),
           fa-icon("/assets/fa-moon.svg", title: "Change to Light Theme"),
-          fa-icon("/assets/fa-qr-code.svg", title: "QR Code"),
+          fa-icon(
+            "/assets/fa-qr-code.svg",
+            title: "QR Code",
+            class: "qr-code-button",
+            content: div(
+              class: "qr-code-content",
+              context {
+                let item = news-item()
+
+                if item != none {
+                  let lang = text.lang
+                  let region = text.region
+
+                  let locale = if region != none {
+                    lang + "-" + region
+                  } else {
+                    lang
+                  }
+
+                  let goal-href = item.content.at(locale)
+                  if goal-href != none {
+                    html.frame(
+                      tiaoma.qrcode({
+                        "https://typst-doc-cn.github.io/news"
+                        news-link(goal-href)
+                      }),
+                    )
+                  }
+                }
+              },
+            ),
+          ),
           context {
             let item = news-item()
 

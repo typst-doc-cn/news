@@ -113,3 +113,29 @@ body {
 .text-link {
     color: rgba(235, 235, 235, 0.9);
 }
+
+.qr-code-button {
+    pointer-events:all;
+}
+
+.qr-code-content {
+    display: none;
+    /* position: absolute;
+    top: 50%;
+    left: 50%; */
+	position: absolute;
+    transform: translateX(calc(-50% + 12px));  /* translate left by half the tip width */
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.qr-code-content > svg {
+    display: block;
+}
+
+.qr-code-button:hover .qr-code-content {
+    display: block;
+}
