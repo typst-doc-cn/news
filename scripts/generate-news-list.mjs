@@ -47,7 +47,35 @@ export const generateNewsList = () => {
     "content/meta/news-list.json",
     JSON.stringify(newsListJson, null, 2)
   );
+
+  generateRssFeed(newsListJson);
   return newsListJson;
+};
+
+const generateRssFeed = (newsListJson) => {
+  const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Typ Blog</title>
+    <link>https://typst-doc-cn.github.io/news/</link>
+    <description>Typ Blog</description>
+    ${newsListJson
+      .map((news) => {
+        const en = news.content.en;
+        const dst = en.replace("content/", "/").replace(".typ", ".html");
+        return `
+      <item>
+        <title>${news.title}</title>
+        <link>https://typst-doc-cn.github.io/news${dst}</link>
+        <description>${news.description}</description>
+        <pubDate>${new Date(news.date).toUTCString()}</pubDate>
+      </item>`;
+      })
+      .join("")}
+  </channel>
+</rss>`;
+  fs.mkdirSync("dist/news", { recursive: true });
+  fs.writeFileSync("dist/news/feed.xml", rssFeed);
 };
 
 if (process.argv[1].endsWith(import.meta.url.split("/").pop())) {
