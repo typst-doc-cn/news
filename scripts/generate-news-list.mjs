@@ -1,8 +1,13 @@
 // content/en
 
 import fs from "fs";
+import { siteUrl } from "./argParser.mjs";
 
-export const generateNewsList = () => {
+/**
+ * @param {string} siteUrl The base URL of the website
+ * @returns
+ */
+export const generateNewsList = (siteUrl) => {
   const newsDir = "content/en/news";
 
   const monthsList = fs.readdirSync(newsDir);
@@ -48,16 +53,16 @@ export const generateNewsList = () => {
     JSON.stringify(newsListJson, null, 2)
   );
 
-  generateRssFeed(newsListJson);
+  generateRssFeed(siteUrl, newsListJson);
   return newsListJson;
 };
 
-const generateRssFeed = (newsListJson) => {
+const generateRssFeed = (siteUrl, newsListJson) => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   <channel>
     <title>Typ Blog</title>
-    <link>https://typst-doc-cn.github.io/news/</link>
+    <link>${siteUrl}/</link>
     <description>Typ Blog</description>
     ${newsListJson
       .map((news) => {
@@ -66,7 +71,7 @@ const generateRssFeed = (newsListJson) => {
         return `
       <item>
         <title>${news.title}</title>
-        <link>https://typst-doc-cn.github.io/news${dst}</link>
+        <link>${siteUrl}${dst}</link>
         <description>${news.description}</description>
         <pubDate>${new Date(news.date).toUTCString()}</pubDate>
       </item>`;
@@ -75,9 +80,9 @@ const generateRssFeed = (newsListJson) => {
   </channel>
 </rss>`;
   fs.mkdirSync("dist/news", { recursive: true });
-  fs.writeFileSync("dist/news/feed.xml", rssFeed);
+  fs.writeFileSync("dist/feed.xml", rssFeed);
 };
 
 if (process.argv[1].endsWith(import.meta.url.split("/").pop())) {
-  generateNewsList();
+  generateNewsList(siteUrl());
 }

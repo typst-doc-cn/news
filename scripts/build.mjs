@@ -8,20 +8,15 @@ import {
   NodeCompiler,
   ProjectWatcher,
 } from "@myriaddreamin/typst-ts-node-compiler";
+import {
+  isDev as isDevIt,
+  urlBase as urlBaseIt,
+  siteUrl as siteUrlIt,
+} from "./argParser.mjs";
 
-/**
- * Watches the project if the `--dev` flag is present
- */
-const isDev = process.argv.includes("--dev");
-// x-url-base
-const urlBase = [process.argv.find((arg) => arg.startsWith("--url-base="))].map(
-  (arg) => {
-    if (arg) {
-      return arg.split("=")[1];
-    }
-    return undefined;
-  }
-)[0];
+const isDev = isDevIt();
+const urlBase = urlBaseIt();
+const siteUrl = siteUrlIt();
 
 /**
  * The arguments for the compiler
@@ -59,7 +54,7 @@ const main = () => {
  */
 const reload = () => {
   killPreviousTasks();
-  const meta = generateNewsList();
+  const meta = generateNewsList(siteUrl);
 
   /**
    * @param {string} src
