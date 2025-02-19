@@ -140,7 +140,7 @@
                   if goal-href != none {
                     html.frame(
                       tiaoma.qrcode({
-                        "https://typst-doc-cn.github.io/news"
+                        "https://typst-doc-cn.github.io"
                         news-link(goal-href)
                       }),
                     )
