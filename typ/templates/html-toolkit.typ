@@ -75,7 +75,7 @@
 
 #let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
 
-#let fa-icon(path, ..attrs) = a(
+#let fa-icon(path, content: "", ..attrs) = a(
   class: "icon-button",
   ..attrs,
   {
@@ -88,7 +88,7 @@
         asset-url(path)
         "\");"
       },
-      "",
+      content,
     )
   },
 )
@@ -110,6 +110,7 @@
         (
           fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news"),
           fa-icon("/assets/fa-moon.svg", title: "Change to Light Theme"),
+          fa-icon("/assets/fa-qr-code.svg", title: "QR Code"),
           context {
             let item = news-item()
 
