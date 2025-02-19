@@ -8,30 +8,25 @@ import {
   NodeCompiler,
   ProjectWatcher,
 } from "@myriaddreamin/typst-ts-node-compiler";
+import {
+  isDev as isDevIt,
+  urlBase as urlBaseIt,
+  siteUrl as siteUrlIt,
+} from "./argParser.mjs";
 
-/**
- * Watches the project if the `--dev` flag is present
- */
-const isDev = process.argv.includes("--dev");
-// x-url-base
-const urlBase = [process.argv.find((arg) => arg.startsWith("--url-base="))]
-  .map((arg) => {
-    if (arg) {
-      return arg.split("=")[1];
-    }
-    return undefined;
-  })[0];
+const isDev = isDevIt();
+const urlBase = urlBaseIt();
+const siteUrl = siteUrlIt();
 
 /**
  * The arguments for the compiler
- * 
+ *
  * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
  */
 const compileArgs = {
   workspace: ".",
-  ...(urlBase ? { inputs: { 'x-url-base': urlBase } } : {}),
+  ...(urlBase ? { inputs: { "x-url-base": urlBase } } : {}),
 };
-
 
 /**
  * The flag for indicating whether there is any error during the build process
@@ -59,7 +54,7 @@ const main = () => {
  */
 const reload = () => {
   killPreviousTasks();
-  const meta = generateNewsList();
+  const meta = generateNewsList(siteUrl);
 
   /**
    * @param {string} src
@@ -97,15 +92,15 @@ let _compiler = undefined;
  *
  * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
  */
-const compiler = () =>
-  (_compiler ||= NodeCompiler.create(compileArgs));
+const compiler = () => (_compiler ||= NodeCompiler.create(compileArgs));
 let _watcher = undefined;
 /**
  *
  * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
  */
-const watcher = () =>
-  (_watcher ||= ProjectWatcher.create(compileArgs));
+const watcher = () => (_watcher ||= ProjectWatcher.create(compileArgs));
+
+const compilerOrWatcher = () => _compiler || _watcher;
 
 /**
  * Kills the previous tasks
@@ -131,7 +126,7 @@ const compile = (src, dst) => {
     if (htmlContent?.length !== undefined) {
       fs.writeFileSync(dst, htmlContent);
       console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
-      watcher().evictCache(30);
+      compilerOrWatcher()?.evictCache(30);
     }
   };
 };

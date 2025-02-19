@@ -1,24 +1,24 @@
-
 #import "/typ/templates/news.typ": *
 
 #show: news-template.with(
-  date: "2021-09-01",
+  date: "2025-01-29",
   title: "PR #5773 Resolve bound name of bare import statically",
   lang: "en",
   tags: ("pr",),
-  description: "This PR forbids inwarranted dynamic imports, making imported names of modules determined at syntax stage.",
+  description: "This PR changes how binding names are resolved for `import` statements without import lists or renaming.",
 )
 
-#lorem(70)
+The behavior for resolving binding names in `import` statements without import lists or renaming has been changed. Specifically, binding names are no longer resolved dynamically but must be statically known in the AST.
 
-// An equation:
+#exp-err(
+  ```typ
+  #import "te" + "st.typ"
+  This is a non-static `import`
+  ```,
+  "cannot determine binding name for this import
 
-// $
-//   integral f(x) dif x
-// $
-
-// An equation that is scrolled horizontally:
-
-// $
-//   integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x integral f(x) dif x
-// $
+Hint: the name must be statically known
+Hint: you can rename the import with `as`
+Hint: to import specific items from a dynamic source, add a colon followed by an import list
+",
+)
