@@ -1,5 +1,5 @@
 
-#import "/typ/templates/html-toolkit.typ": *
+#import "/typ/templates/template.typ": *
 
 /// Don't worry if you don't write a description. We can generate description automatically
 /// by text exporting the content.

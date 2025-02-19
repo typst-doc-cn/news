@@ -1,5 +1,5 @@
 
-#import "/typ/templates/html-toolkit.typ": *
+#import "/typ/templates/template.typ": *
 
 #let main-title(title, description) = {
   div(
