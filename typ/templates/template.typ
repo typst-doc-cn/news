@@ -54,7 +54,6 @@
 /// A QR code button.
 #let qrcode-button = fa-icon(
   "/assets/fa-qr-code.svg",
-  title: "QR Code",
   class: "qr-code-button",
   content: div(
     class: "qr-code-content",
