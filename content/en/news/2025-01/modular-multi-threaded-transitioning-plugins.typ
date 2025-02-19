@@ -1,17 +1,40 @@
-
 #import "/typ/templates/news.typ": *
 
 #show: news-template.with(
-  date: "2021-09-01",
+  date: "2025-01-30",
   title: "PR #5779 Modular, multi-threaded, transitioning plugins",
   lang: "en",
   tags: ("pr",),
-  description: "This PR adds changes about the WASM plugins to allow fork state of plugin by calling mutable plugin functions.",
+  description: "This PR enhances WASM plugins, allowing plugin state forking through mutable plugin function calls.",
 )
 
-A number of improvements have been made to the plugin system, including.
-news-template now has no specialized plugin type. `plugin(...) ` will return `module` directly. So we can use import on plugins, and we can use
-`with` .
-news-template now supports multi-threaded running of plugins, which is done automatically without any manual action on the part of the user.
-news-template provides a new plugin.transition API for executing non-pure functions. If you don't use transition to call non-pure functions, it may lead to unpredictable results.
-lead to unpredictable results.
+Several improvements have been made to the plugin system:
+- There's no longer a dedicated plugin type. `plugin(...)` now directly returns a `module`. This means we can use `import` with plugins and `.with` with plugin functions.
+- Plugins now support multi-threading automatically, requiring no manual intervention from users.
+- A new `plugin.transition` API has been introduced for executing non-pure functions. Calling non-pure functions without using `transition` may lead to unpredictable results.
+
+#_exp(
+  ```typ #import plugin("mycalc.wasm"): myadd, mymut
+  #myadd(3, 5) \
+  #mymut.with(3)(5)
+  ```,
+  [
+    8 \
+    15
+  ],
+)
+
+#_exp(
+  ```typ #let base = plugin("mut.wasm")
+  State before mutation: #base.get() \
+
+  #let mutated = plugin.transition(base.add, "hello")
+  State after mutation: #base.get() \
+  Returned mutated value: #mutated.get()
+  ```,
+  [
+    State before mutation: [] \
+    State after mutation: [] \
+    Returned mutated value: [hello]
+  ],
+)

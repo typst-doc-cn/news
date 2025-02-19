@@ -22,7 +22,6 @@ export const generateNewsList = () => {
 
     const newsContent = fs.readFileSync(newsPath, "utf-8");
 
-    // Todo: extract these information by typst query
     const title = newsContent.match(/title: "(.*?)"/)[1];
     const date = newsContent.match(/date: "(.*?)"/)[1];
     const description = newsContent.match(/description: "(.*?)"/)[1];
@@ -38,6 +37,11 @@ export const generateNewsList = () => {
       },
     });
   }
+
+  // latest first
+  newsListJson.sort((a, b) => {
+    return new Date(b.date) - new Date(a.date);
+  });
 
   fs.writeFileSync(
     "content/meta/news-list.json",

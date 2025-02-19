@@ -35,3 +35,59 @@
     },
   )
 }
+
+#let _exp(left, right) = {
+  block(
+    breakable: false,
+    html.elem(
+      "div",
+      (
+        left,
+        html.elem("div", right, attrs: (style: "padding: 1em;")),
+      )
+        .map(x => html.elem("div", x))
+        .join(),
+      attrs: {
+        (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; ")
+      },
+    ),
+  )
+}
+#let exp(code, frame: false) = {
+  _exp(
+    code,
+    {
+      let body = eval(code.text, mode: "markup")
+      if frame {
+        html.frame(body)
+      } else {
+        body
+      }
+    },
+  )
+}
+#let exp-err(code, msg) = {
+  _exp(code, "ERR:\n" + msg)
+}
+#let exp-warn(code, msg) = {
+  _exp(code, eval(code.text, mode: "markup") + "WARN:\n" + msg)
+}
+#let exp-change(code, before, after) = {
+  _exp(
+    code,
+    html.elem(
+      "div",
+      (
+        [曾经],
+        [现在],
+        before,
+        after,
+      )
+        .map(x => html.elem("div", x))
+        .join(),
+      attrs: {
+        (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; ")
+      },
+    ),
+  )
+}
