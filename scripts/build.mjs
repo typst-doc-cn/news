@@ -1,10 +1,8 @@
 // @ts-check
 
 import watch from "glob-watcher";
-import { reload } from "./common.mjs";
-import { hasError } from "./utils/typst.mjs";
-import { isDev } from "./utils/args.mjs";
-
+import { reload, hasError } from "./common.mjs";
+import { isDev } from "./argParser.mjs";
 
 const main = () => {
   if (isDev) {

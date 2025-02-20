@@ -1,4 +1,5 @@
 #import "/typ/templates/news.typ": *
+#import "/typ/templates/template.typ": *
 
 #show: news-template.with(
   date: "2025-02-06",

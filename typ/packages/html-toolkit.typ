@@ -1,6 +1,9 @@
 
 #import "supports-text.typ": *
 
+#let x-target = sys.inputs.at("x-target", default: "light")
+#let x-is-dark = x-target.ends-with("dark")
+#let x-is-light = x-target.ends-with("light")
 #let assets-url-base = sys.inputs.at("x-url-base", default: none)
 #let url-base = if assets-url-base != none { assets-url-base } else { "/dist/" }
 #let assets-url-base = if assets-url-base != none { assets-url-base } else { "/" }

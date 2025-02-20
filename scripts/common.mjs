@@ -2,10 +2,60 @@
 
 import fs from "fs";
 import { dirname } from "path";
-import { compile, compiler, query, watcher } from "./utils/typst.mjs";
-import { isDev, siteUrl } from "./utils/args.mjs";
-import { extract, FALLBACK_LANG, LANGS } from "./utils/i18n.mjs";
+import {
+  NodeCompiler,
+  ProjectWatcher,
+} from "@myriaddreamin/typst-ts-node-compiler";
+import { isDev, urlBase, siteUrl } from "./argParser.mjs";
+import { extract, FALLBACK_LANG, LANGS } from "./i18n.mjs";
 
+/**
+ * The flag for indicating whether there is any error during the build process
+ */
+export let hasError = false;
+
+/**
+ * The arguments for the compiler
+ *
+ * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
+ */
+const compileArgs = {
+  workspace: ".",
+  ...(urlBase
+    ? { inputs: { "x-url-base": urlBase, "x-target": "web-light" } }
+    : {}),
+};
+
+/**
+ * The arguments for querying metadata
+ *
+ * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
+ */
+const queryArgs = {
+  ...compileArgs,
+  inputs: {
+    "x-meta": "true",
+    ...compileArgs.inputs,
+  },
+};
+
+/**
+ * Lazily created compiler and watcher
+ */
+let _compiler = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
+ */
+export const compiler = () => (_compiler ||= NodeCompiler.create(compileArgs));
+let _watcher = undefined;
+/**
+ *
+ * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
+ */
+export const watcher = () => (_watcher ||= ProjectWatcher.create(compileArgs));
+
+export const compilerOrWatcher = () => _compiler || _watcher;
 
 /**
  * Reloads and builds the project
@@ -37,10 +87,7 @@ export const reload = () => {
     const indexSrc = `content/${lang}/index.typ`;
     const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
     const indexDst = `dist/${lang}/index.html`;
-    typstRun(
-      fs.existsSync(indexSrc) ? indexSrc : fallbackIndexSrc,
-      indexDst
-    );
+    typstRun(fs.existsSync(indexSrc) ? indexSrc : fallbackIndexSrc, indexDst);
   });
 
   const indexSrc = "src/index.typ";
@@ -59,6 +106,53 @@ let killPreviousTasks = () => {
   watcher().clear();
 };
 
+/**
+ * @param {string} src
+ * @param {string} dst
+ */
+export const compile = (src, dst) => {
+  /**
+   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
+   */
+  return (compiler) => {
+    let alreadyHasError = false;
+
+    /**
+     *
+     * @param {string} theme The theme to compile
+     */
+    const compileTheme = (theme) => {
+      const htmlResult = compiler.mayHtml({
+        mainFilePath: src,
+        inputs: { "x-target": `web-${theme}` },
+      });
+
+      hasError = hasError || htmlResult.hasError();
+
+      if (!alreadyHasError) {
+        htmlResult.printErrors();
+      }
+      alreadyHasError = htmlResult.hasError();
+
+      const htmlContent = htmlResult.result;
+      if (htmlContent?.length !== undefined) {
+        const themeDst =
+          theme === "light" ? dst.replace(".html", `.${theme}.html`) : dst;
+        fs.writeFileSync(themeDst, htmlContent);
+      }
+    };
+
+    compileTheme("light");
+    compileTheme("dark");
+
+    if (alreadyHasError) {
+      console.log(` \x1b[1;31mError\x1b[0m ${src}`);
+    } else {
+      console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
+      compilerOrWatcher()?.evictCache(30);
+    }
+  };
+};
 
 /**
  * @param {string} src
@@ -78,10 +172,46 @@ export const typstRun = (src, dst) => {
 };
 
 /**
- * @param {string} src 
- * @param {string} selector 
+ * @param {string} src
+ * @param {string} selector
  * @param {boolean} one
- * 
+ */
+export const query = (src, selector, one) => {
+  /**
+   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
+   */
+  return (compiler) => {
+    try {
+      /**
+       * @type {any[]}
+       */
+      const queryData = compiler.query(
+        { mainFilePath: src, ...queryArgs },
+        { selector }
+      );
+      if (queryData?.length !== undefined) {
+        if (one) {
+          if (queryData.length !== 1) {
+            throw new Error(
+              `Query expected one result, but got ${queryData.length}`
+            );
+          }
+          return queryData[0];
+        }
+        return queryData;
+      }
+    } catch (e) {
+      hasError = true;
+      throw e;
+    }
+  };
+};
+
+/**
+ * @param {string} src
+ * @param {string} selector
+ * @param {boolean} one
+ *
  * @returns {import("./types.d.ts").FileMetaElem | undefined}
  */
 const typstQuery = (src, selector, one) => {
@@ -94,13 +224,11 @@ const typstQuery = (src, selector, one) => {
   }
 };
 
-
 /**
  * @param {string} siteUrl The base URL of the website
  * @returns
  */
 export const generateNewsList = (siteUrl) => {
-
   /** @type {Record<string, import("./types.d.ts").I18n<import("./types.d.ts").FileMeta & {content: string}>>} */
   const i18nFileMeta = {};
 
@@ -128,7 +256,7 @@ export const generateNewsList = (siteUrl) => {
           // @ts-ignore
           [lang]: {
             content: newsPath,
-            ...fileMeta
+            ...fileMeta,
           },
         };
       } else {
@@ -138,7 +266,7 @@ export const generateNewsList = (siteUrl) => {
         if (fileMeta) {
           i18nFileMeta[id][lang] = {
             content: newsPath,
-            ...fileMeta
+            ...fileMeta,
           };
         }
       }
@@ -156,7 +284,6 @@ export const generateNewsList = (siteUrl) => {
   const newsListJson = [];
 
   for (const [id, meta] of Object.entries(i18nFileMeta)) {
-
     newsListJson.push({
       id,
       date: meta[FALLBACK_LANG].date,
@@ -206,4 +333,3 @@ const generateRssFeed = (siteUrl, newsListJson) => {
   fs.mkdirSync("dist/news", { recursive: true });
   fs.writeFileSync("dist/feed.xml", rssFeed);
 };
-
