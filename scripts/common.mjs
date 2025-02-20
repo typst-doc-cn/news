@@ -6,7 +6,7 @@ import {
   NodeCompiler,
   ProjectWatcher,
 } from "@myriaddreamin/typst-ts-node-compiler";
-import { isDev, urlBase, siteUrl } from "./argParser.mjs";
+import { isDev, urlBase, siteUrl } from "./args.mjs";
 import { extract, FALLBACK_LANG, LANGS } from "./i18n.mjs";
 
 /**

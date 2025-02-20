@@ -2,7 +2,7 @@
 
 import watch from "glob-watcher";
 import { reload, hasError } from "./common.mjs";
-import { isDev } from "./argParser.mjs";
+import { isDev } from "./args.mjs";
 
 const main = () => {
   if (isDev) {
