@@ -13,23 +13,10 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
 
 以下是一份中文的简要更新日志:
 
-#import "/typ/packages/zebraw/src/lib.typ": zebraw-init, zebraw-html as zebraw
 
-#set text(font: ((name: "Liberation Serif", covers: "latin-in-cjk"), "Noto Serif CJK SC"), lang: "zh", fill: white)
 #set table(stroke: white)
 
 #show table: set align(center)
-#show: zebraw-init.with(
-  background-color: (luma(10), luma(20)),
-  highlight-color: blue.lighten(90%),
-  comment-color: blue.lighten(93%),
-  lang-color: blue.darken(90%),
-  lang: false,
-)
-#show: zebraw.with(
-  block-width: 100%,
-  line-width: 100%,
-)
 
 #show link: underline.with(stroke: 0.8pt)
 #show link: set text(blue)
@@ -60,36 +47,6 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
     heading(tags + title, level: 1)
   }
 }
-// #let _exp(left, right) = {
-//   html.elem(
-//     "div",
-//     attrs: (
-//       style: (
-//         "display: flex",
-//         "flex-direction: column",
-//         "align-items: center",
-//         "gap: 1em",
-//         "width: 80%",
-//       ).join("; "),
-//     ),
-//     {
-//       left
-//       html.frame(
-//         block(
-//           inset: 2em,
-//           width: 32em,
-//           stroke: white,
-//           right,
-//         ),
-//       )
-//       linebreak()
-//     },
-//   )
-// }
-
-// #let exp(code) = {
-//   _exp(code, eval(code.text, mode: "markup"))
-// }
 #let exp-err(code, msg) = {
   _exp(code, "ERR:\n" + msg)
 }
@@ -118,6 +75,10 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
   ),
 )
 
+#show outline.entry: it => link(
+  it.element.location(),
+  it.indented(it.prefix(), it.body()),
+)
 #outline(target: <highlight>, title: "Highlight")
 
 #pr(
@@ -263,19 +224,16 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
 
 #exp-change(
   ```typ
-  #show math.equation: set text(font: "Libertinus Math")
   $
   f'(x)
   $
   ```,
   [
-    #show math.equation: set text(font: "Libertinus Math")
     $
       f zws^(zws') (x)
     $
   ],
   [
-    #show math.equation: set text(font: "Libertinus Math")
     $
       f'(x)
     $
