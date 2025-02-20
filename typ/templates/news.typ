@@ -61,7 +61,7 @@
         .map(x => html.elem("div", x))
         .join(),
       attrs: {
-        (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; ")
+        (style: "display: grid; grid-template-columns: 50% 50%; gap: 0.5em; ")
       },
     ),
   )
