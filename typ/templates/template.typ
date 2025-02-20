@@ -1,6 +1,7 @@
 
 #import "@preview/tiaoma:0.2.1"
 #import "/typ/packages/html-toolkit.typ": *
+#import "/typ/packages/zebraw/src/lib.typ": zebraw-init, zebraw-html as zebraw
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -164,6 +165,22 @@
   set document(description: description) if description != none
 
   show: load-html-template.with("/src/template.html")
+  show: zebraw-init.with(
+    // should vary by theme
+    background-color: (luma(10), luma(20)),
+    highlight-color: blue.lighten(90%),
+    comment-color: blue.lighten(93%),
+    lang-color: blue.darken(90%),
+    lang: false,
+  )
+  show: zebraw.with(
+    block-width: 100%,
+    line-width: 100%,
+  )
+  set raw(theme: "/assets/tokyo-night.tmTheme")
+  show raw: set text(fill: rgb("#c0caf5"))
+
+  show raw.where(block: true): it => it + linebreak()
 
   pre-header
   header(go-back: go-back)
