@@ -75,6 +75,10 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
   ),
 )
 
+#show outline.entry: it => link(
+  it.element.location(),
+  it.indented(it.prefix(), it.body()),
+)
 #outline(target: <highlight>, title: "Highlight")
 
 #pr(
