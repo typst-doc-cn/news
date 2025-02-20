@@ -1,0 +1,3 @@
+[submodule "typ/packages/zebraw"]
+	path = typ/packages/zebraw
+	url = https://github.com/hongjr03/typst-zebraw.git
