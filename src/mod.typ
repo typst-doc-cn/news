@@ -23,8 +23,7 @@
 }
 
 #let news-item(item) = {
-  let (date, title, description) = item
-  let tags = ("PR",)
+  let (date, title, description, tags) = item
 
   let href = item.content.en.replace("content/", url-base).replace(".typ", ".html")
 
