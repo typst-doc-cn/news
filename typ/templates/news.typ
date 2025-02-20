@@ -55,6 +55,7 @@
     {
       html.elem(
         "style",
+        // 48rem is from tailwindcss, the medium breakpoint.
         ```css
         @media (width >= 48rem) {
           .exp {
