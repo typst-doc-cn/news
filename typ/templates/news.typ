@@ -52,18 +52,35 @@
   import "/typ/templates/template.typ": *
   block(
     breakable: false,
-    html.elem(
-      "div",
-      (
-        left,
-        html.elem("div", right, attrs: (style: "padding: 1em;")),
+    {
+      html.elem(
+        "style",
+        ```css
+        @media (width >= 48rem) {
+          .exp {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            gap: 0.5em;
+          }
+        }
+        @media (width < 48rem) {
+          .exp {
+            display: block;
+          }
+        }
+        ```.text
       )
-        .map(x => html.elem("div", x))
-        .join(),
-      attrs: {
-        (style: "display: grid; grid-template-columns: 50% 50%; gap: 0.5em; ")
-      },
-    ),
+      html.elem(
+        "div",
+        (
+          left,
+          html.elem("div", right, attrs: (style: "padding: 1em;")),
+        )
+          .map(x => html.elem("div", x))
+          .join(),
+        attrs: (class: "exp"),
+      )
+    },
   )
 }
 #let exp(code, frame: false) = {
