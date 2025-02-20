@@ -1,5 +1,4 @@
-
-#import "/typ/templates/template.typ": *
+#let is-meta = sys.inputs.at("meta", default: none) != none
 
 /// Don't worry if you don't write a description. We can generate description automatically
 /// by text exporting the content.
@@ -15,6 +14,16 @@
   set document(title: title, description: description)
   set text(lang: lang, region: region)
 
+  if is-meta {
+    return [#metadata((
+        title: title,
+        date: date,
+        description: description,
+        tags: tags,
+      )) <front-matter>]
+  }
+
+  import "/typ/templates/template.typ": *
   base-template(
     pre-header: current-title.update(title),
     go-back: news-link("content/index.typ"),
@@ -37,6 +46,10 @@
 }
 
 #let _exp(left, right) = {
+  if is-meta {
+    return
+  }
+  import "/typ/templates/template.typ": *
   block(
     breakable: false,
     html.elem(
@@ -73,6 +86,9 @@
   _exp(code, eval(code.text, mode: "markup") + "WARN:\n" + msg)
 }
 #let exp-change(code, before, after) = {
+  if is-meta {
+    return
+  }
   _exp(
     code,
     html.elem(
