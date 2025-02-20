@@ -22,10 +22,17 @@
   )
 }
 
-#let news-item(item) = {
+#let news-item(item, lang: "en") = {
   let (date, title, description, tags) = item
 
-  let href = item.content.en.replace("content/", url-base).replace(".typ", ".html")
+  let href = item
+    .content
+    .at(
+      lang,
+      default: item.content.en,
+    )
+    .replace("content/", url-base)
+    .replace(".typ", ".html")
 
   add-rss-feed((
     kind: "news-item",

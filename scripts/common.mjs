@@ -16,6 +16,11 @@ export const isDev = isDevIt();
 export const urlBase = urlBaseIt();
 export const siteUrl = siteUrlIt();
 
+/**
+ * Supported languages, currently used for generating index.html
+ */
+export const LANGS = ["en", "zh-CN"];
+export const FALLBACK_LANG = "en";
 
 /**
  * The flag for indicating whether there is any error during the build process
@@ -75,6 +80,16 @@ export const reload = () => {
       typstContentWatch(news.content["zh-CN"]);
     }
   }
+
+  LANGS.forEach((lang) => {
+    const indexSrc = `content/${lang}/index.typ`;
+    const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
+    const indexDst = `dist/${lang}/index.html`;
+    typstRun(
+      fs.existsSync(indexSrc) ? indexSrc : fallbackIndexSrc,
+      indexDst
+    );
+  });
 
   const indexSrc = "src/index.typ";
   const indexDst = "dist/index.html";
