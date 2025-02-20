@@ -1,3 +1,5 @@
+/// A module to extract text string from Typst elements
+
 
 #let _styled = smallcaps("").func();
 #let _equation = $1$.func();

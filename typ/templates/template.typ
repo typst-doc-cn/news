@@ -1,6 +1,6 @@
 
 #import "@preview/tiaoma:0.2.1"
-#import "/typ/templates/html-toolkit.typ": *
+#import "/typ/packages/html-toolkit.typ": *
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
