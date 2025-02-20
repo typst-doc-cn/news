@@ -189,9 +189,7 @@
   )
   set raw(theme: "/assets/tokyo-night.tmTheme")
   show raw: set text(fill: rgb("#c0caf5"))
-
-  show raw.where(block: true): it => it + linebreak()
-
+  
   pre-header
   header(go-back: go-back)
   div(class: "main-body", content)

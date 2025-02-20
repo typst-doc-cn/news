@@ -69,7 +69,7 @@
             display: block;
           }
         }
-        ```.text
+        ```.text,
       )
       html.elem(
         "div",
@@ -79,7 +79,7 @@
         )
           .map(x => html.elem("div", x))
           .join(),
-        attrs: (class: "exp"),
+        attrs: (class: "exp", style: "margin: 1em 0em;"),
       )
     },
   )
