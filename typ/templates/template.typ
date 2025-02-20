@@ -171,11 +171,12 @@
     highlight-color: blue.lighten(90%),
     comment-color: blue.lighten(93%),
     lang-color: blue.darken(90%),
-    lang: false,
+    lang: true,
   )
   show: zebraw.with(
     block-width: 100%,
     line-width: 100%,
+    wrap: false,
   )
   set raw(theme: "/assets/tokyo-night.tmTheme")
   show raw: set text(fill: rgb("#c0caf5"))

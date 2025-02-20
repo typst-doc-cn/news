@@ -47,23 +47,7 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
     heading(tags + title, level: 1)
   }
 }
-#let exp-err(code, msg) = {
-  _exp(code, "ERR:\n" + msg)
-}
-#let exp-warn(code, msg) = {
-  _exp(code, eval(code.text, mode: "markup") + "WARN:\n" + msg)
-}
-#let exp-change(code, before, after) = {
-  _exp(
-    code,
-    table(
-      stroke: white,
-      columns: 2,
-      [曾经], [现在],
-      before, after,
-    ),
-  )
-}
+
 
 #align(
   center,
@@ -249,16 +233,16 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
 实现了 PDF 输出中无可见注释的文件嵌入功能.
 
 #_exp(
-  ```typ
-  下面的代码会向 PDF 中嵌入一些附件.
-  #pdf.embed("hello.txt")
+```typ
+下面的代码会向 PDF 中嵌入一些附件.
+#pdf.embed("hello.txt")
 
-  可以手动设置多项参数.
-  #pdf.embed("changelog.typ", description: "Source code of this document.", mime-type: "text/plain", relationship: "source")
+可以手动设置多项参数.
+#pdf.embed("changelog.typ", description: "Source code of this document.", mime-type: "text/plain", relationship: "source")
 
-  也可以从 `bytes` 插入, 并且自定义文件名.
-  #let data = read("hello.txt", encoding: none)
-  #pdf.embed("hello2.txt", data)
+也可以从 `bytes` 插入, 并且自定义文件名.
+#let data = read("hello.txt", encoding: none)
+#pdf.embed("hello2.txt", data)
   ```,
   [],
 )
