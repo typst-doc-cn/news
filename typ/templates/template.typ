@@ -1,6 +1,6 @@
 
 #import "@preview/tiaoma:0.2.1"
-#import "/typ/templates/html-toolkit.typ": *
+#import "/typ/packages/html-toolkit.typ": *
 #import "/typ/packages/zebraw/src/lib.typ": zebraw-init, zebraw-html as zebraw
 
 /// All metadata of news content.
@@ -14,7 +14,7 @@
 /// -> The current news item.
 #let news-item() = {
   let title = current-title.get()
-  news-data.find(item => item.title == title)
+  news-data.find(item => title in item.title.values())
 }
 
 /// Converts a source path to a news link.
@@ -182,7 +182,7 @@
   show raw: set text(fill: rgb("#c0caf5"))
 
   show raw.where(block: true): it => it + linebreak()
-  
+
   pre-header
   header(go-back: go-back)
   div(class: "main-body", content)

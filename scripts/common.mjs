@@ -2,53 +2,10 @@
 
 import fs from "fs";
 import { dirname } from "path";
-import {
-  NodeCompiler,
-  ProjectWatcher,
-} from "@myriaddreamin/typst-ts-node-compiler";
-import {
-  isDev as isDevIt,
-  urlBase as urlBaseIt,
-  siteUrl as siteUrlIt,
-} from "./argParser.mjs";
+import { compile, compiler, query, watcher } from "./utils/typst.mjs";
+import { isDev, siteUrl } from "./utils/args.mjs";
+import { extract, FALLBACK_LANG, LANGS } from "./utils/i18n.mjs";
 
-export const isDev = isDevIt();
-export const urlBase = urlBaseIt();
-export const siteUrl = siteUrlIt();
-
-
-/**
- * The flag for indicating whether there is any error during the build process
- */
-export let hasError = false;
-
-/**
- * The arguments for the compiler
- *
- * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
- */
-const compileArgs = {
-  workspace: ".",
-  ...(urlBase ? { inputs: { "x-url-base": urlBase } } : {}),
-};
-
-/**
- * Lazily created compiler and watcher
- */
-let _compiler = undefined;
-/**
- *
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
- */
-export const compiler = () => (_compiler ||= NodeCompiler.create(compileArgs));
-let _watcher = undefined;
-/**
- *
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
- */
-export const watcher = () => (_watcher ||= ProjectWatcher.create(compileArgs));
-
-export const compilerOrWatcher = () => _compiler || _watcher;
 
 /**
  * Reloads and builds the project
@@ -76,6 +33,16 @@ export const reload = () => {
     }
   }
 
+  LANGS.forEach((lang) => {
+    const indexSrc = `content/${lang}/index.typ`;
+    const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
+    const indexDst = `dist/${lang}/index.html`;
+    typstRun(
+      fs.existsSync(indexSrc) ? indexSrc : fallbackIndexSrc,
+      indexDst
+    );
+  });
+
   const indexSrc = "src/index.typ";
   const indexDst = "dist/index.html";
   typstRun(indexSrc, indexDst);
@@ -92,27 +59,6 @@ let killPreviousTasks = () => {
   watcher().clear();
 };
 
-/**
- * @param {string} src
- * @param {string} dst
- */
-export const compile = (src, dst) => {
-  /**
-   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
-   */
-  return (compiler) => {
-    const htmlResult = compiler.mayHtml({ mainFilePath: src });
-
-    hasError = hasError || htmlResult.hasError();
-    htmlResult.printErrors();
-    const htmlContent = htmlResult.result;
-    if (htmlContent?.length !== undefined) {
-      fs.writeFileSync(dst, htmlContent);
-      console.log(` \x1b[1;32mCompiled\x1b[0m ${src}`);
-      compilerOrWatcher()?.evictCache(30);
-    }
-  };
-};
 
 /**
  * @param {string} src
@@ -132,29 +78,11 @@ export const typstRun = (src, dst) => {
 };
 
 /**
- * @param {string} src
- * @param {string} selector
- * @param {boolean} one
- */
-export const query = (src, selector, one) => {
-  /**
-   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
-   */
-  return (compiler) => {
-    const queryData = compiler.query({ mainFilePath: src, inputs: { meta: "1" } }, { selector });
-    if (queryData?.length !== undefined) {
-      if (one) {
-        return queryData[0];
-      }
-      return queryData;
-    }
-  };
-};
-
-/**
  * @param {string} src 
  * @param {string} selector 
  * @param {boolean} one
+ * 
+ * @returns {import("./types.d.ts").FileMetaElem | undefined}
  */
 const typstQuery = (src, selector, one) => {
   try {
@@ -172,41 +100,72 @@ const typstQuery = (src, selector, one) => {
  * @returns
  */
 export const generateNewsList = (siteUrl) => {
-  const newsDir = "content/en/news";
 
-  const monthsList = fs.readdirSync(newsDir);
-  // @ts-ignore
-  const newsList = monthsList.reduce((acc, month) => {
-    const monthPath = `${newsDir}/${month}`;
-    const news = fs
-      .readdirSync(monthPath)
-      .filter((news) => news.endsWith(".typ"))
-      .map((news) => `${month}/${news}`);
-    return [...acc, ...news];
-  }, []);
+  /** @type {Record<string, import("./types.d.ts").I18n<import("./types.d.ts").FileMeta & {content: string}>>} */
+  const i18nFileMeta = {};
 
+  /** @param {string} lang */
+  const travel = (lang) => {
+    const newsDir = `content/${lang}/news`;
+    const monthsList = fs.readdirSync(newsDir);
+    /** @type {string[]} */
+    // @ts-ignore
+    const newsList = monthsList.reduce((acc, month) => {
+      const monthPath = `${newsDir}/${month}`;
+      const news = fs
+        .readdirSync(monthPath)
+        .filter((news) => news.endsWith(".typ"))
+        .map((news) => `${month}/${news}`);
+      return [...acc, ...news];
+    }, []);
+
+    for (const newsId of newsList) {
+      const id = newsId.replace(".typ", "");
+      const newsPath = `${newsDir}/${newsId}`;
+      const fileMeta = typstQuery(newsPath, "<front-matter>", true)?.value;
+      if (lang === FALLBACK_LANG) {
+        i18nFileMeta[id] = {
+          // @ts-ignore
+          [lang]: {
+            content: newsPath,
+            ...fileMeta
+          },
+        };
+      } else {
+        if (!i18nFileMeta[id]) {
+          throw new Error(`News ${id} not found in fallback language`);
+        }
+        if (fileMeta) {
+          i18nFileMeta[id][lang] = {
+            content: newsPath,
+            ...fileMeta
+          };
+        }
+      }
+    }
+  };
+
+  travel(FALLBACK_LANG);
+  LANGS.forEach((lang) => {
+    if (lang !== FALLBACK_LANG) {
+      travel(lang);
+    }
+  });
+
+  /** @type {import("./types.d.ts").NewsMeta[]} */
   const newsListJson = [];
-  for (const newsId of newsList) {
-    const id = newsId.replace(".typ", "");
-    const newsPath = `${newsDir}/${newsId}`;
 
-    const newsContent = fs.readFileSync(newsPath, "utf-8");
-
-    const { title, date, tags, description } = typstQuery(newsPath, "<front-matter>", true)?.value;
+  for (const [id, meta] of Object.entries(i18nFileMeta)) {
 
     newsListJson.push({
       id,
-      title,
-      date,
-      description,
-      tags,
-      content: {
-        en: newsPath,
-        [`zh-CN`]: newsPath.replace("content/en", "content/zh-CN"),
-      },
+      date: meta[FALLBACK_LANG].date,
+      content: extract(meta, "content"),
+      description: extract(meta, "description"),
+      tags: extract(meta, "tags"),
+      title: extract(meta, "title"),
     });
   }
-
   // latest first
   newsListJson.sort((a, b) => {
     // @ts-ignore

@@ -1,4 +1,4 @@
-#let is-meta = sys.inputs.at("meta", default: none) != none
+#let is-meta = sys.inputs.at("x-meta", default: none) != none
 
 /// Don't worry if you don't write a description. We can generate description automatically
 /// by text exporting the content.

@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@myriaddreamin/typst-ts-node-compiler": "=0.5.5-rc2",
+    "@types/glob-watcher": "^5.0.5",
     "@types/node": "16.7.13",
     "glob-watcher": "^6.0.0",
     "http-server": "14.1.1"
