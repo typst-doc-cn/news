@@ -13,7 +13,7 @@
 /// -> The current news item.
 #let news-item() = {
   let title = current-title.get()
-  news-data.find(item => item.title == title)
+  news-data.find(item => title in item.title.values())
 }
 
 /// Converts a source path to a news link.
