@@ -1,17 +1,12 @@
+#import "/typ/packages/html-toolkit.typ": url-base
+
 #let js = ```javascript
 document.addEventListener("DOMContentLoaded", function() {
-  let prefix = window.location.pathname;
-  if (prefix.endsWith("index.html")) {
-    prefix = prefix.slice(0, -10);
-  }
-  if (prefix.endsWith("/")) {
-    prefix = prefix.slice(0, -1);
-  }
   let lang = window.navigator.userLanguage || window.navigator.language;
   if (lang.startsWith("en")) {
-    window.location.href = `${prefix}/en/`;
+    window.location.href = `{{prefix}}/en/`;
   } else {
-    window.location.href = `${prefix}/${lang}/`;
+    window.location.href = `{{prefix}}/${lang}/`;
   }
 });
 ```
@@ -26,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     html.elem(
       "head",
       {
-        html.elem("script", js.text)
+        html.elem("script", js.text.replace("{{prefix}}", url-base))
       },
     )
     html.elem("body", html.elem("h1", "Redirecting..."))
