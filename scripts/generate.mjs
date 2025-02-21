@@ -98,9 +98,9 @@ const generateRssFeed = (siteUrl, newsListJson) => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   <channel>
-    <title>Typ Blog</title>
+    <title>Typst CN News (unofficial)</title>
     <link>${siteUrl}/</link>
-    <description>Typ Blog</description>
+    <description>The recent changes about typst.</description>
     ${newsListJson
       .map((news) => {
         const en = news.content.en;
