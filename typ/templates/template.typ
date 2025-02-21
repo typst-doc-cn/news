@@ -168,6 +168,22 @@
   )
 }
 
+/// Fonts.
+#let main-font-cn = ("Noto Sans CJK SC", "Source Han Serif SC")
+#let code-font-cn = ("Noto Sans CJK SC",)
+
+#let main-font = (
+  (name: "Libertinus Serif", covers: "latin-in-cjk"),
+  ..main-font-cn,
+)
+
+#let code-font = (
+  "BlexMono Nerd Font Mono",
+  // typst-book's embedded font
+  "DejaVu Sans Mono",
+  ..code-font-cn,
+)
+
 /// The base of all html templates.
 #let base-template(pre-header: none, go-back: none, description: none, content) = {
   // todo: remove it after the bug is fixed
@@ -220,6 +236,7 @@
   )
   set raw(theme: "/assets/tokyo-night.tmTheme")
   show raw: set text(fill: rgb("#c0caf5"))
+  set text(font: main-font)
 
   pre-header
   header(go-back: go-back)

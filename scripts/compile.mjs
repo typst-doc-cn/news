@@ -23,6 +23,7 @@ const compileArgs = {
     "x-target": "web-light",
     ...(urlBase ? { "x-url-base": urlBase } : {}),
   },
+  fontArgs: [{ fontPaths: ["./assets/fonts", "./assets/typst-fonts"] }],
 };
 
 /**
