@@ -1,6 +1,6 @@
 # News
 
-Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 收集 Typst 的特殊事件，包括：
 
@@ -8,7 +8,11 @@ Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 - Package 的更新。
 - Typst 及其相关工具版本的发布。
 
-# License
+## 内容创作
+
+参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+## 许可证
 
 代码根据 Apache-2.0 授权。内容根据 [CC BY-NC-SA 4.0][cc-by-nc-sa] 授权。
 
