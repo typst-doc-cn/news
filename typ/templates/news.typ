@@ -34,7 +34,7 @@
         @media (width >= 48rem) {
           .exp {
             display: grid;
-            grid-template-columns: 50% 50%;
+            grid-template-columns: 50% auto;
             gap: 0.5em;
           }
         }
@@ -46,7 +46,7 @@
         }
 
         .frame {
-          shadow: 0 0 0.5em rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.1);
           border-radius: 0.5em;
           background: #fff;
           padding: 0.5em;
@@ -89,14 +89,18 @@
     ),
   )
 }
-#let exp(code, frame: false) = {
+#let exp(code, ..args, frame: false) = {
   if is-meta {
     return
   }
   _exp(
     code,
     {
-      let body = eval(code.text, mode: "markup")
+      let body = if args.pos().len() == 0 {
+        eval(code.text, mode: "markup")
+      } else {
+        args.at(0)
+      }
       if frame {
         html.elem("div", html.frame(body), attrs: (class: "frame"))
       } else {

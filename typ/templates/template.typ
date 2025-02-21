@@ -179,10 +179,6 @@
   ..code-font-cn,
 )
 
-#let math-font = (
-
-)
-
 /// The base of all html templates.
 #let base-template(pre-header: none, go-back: none, description: none, content) = {
   // todo: remove it after the bug is fixed
