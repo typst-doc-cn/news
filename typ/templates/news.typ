@@ -50,6 +50,8 @@
           border-radius: 0.5em;
           background: #fff;
           padding: 0.5em;
+          width: fit-content;
+          margin: auto;
         }
         ```.text,
       )
@@ -89,6 +91,7 @@
     ),
   )
 }
+
 #let exp(code, ..args, frame: false) = {
   if is-meta {
     return
@@ -126,8 +129,8 @@
       (
         [曾经],
         [现在],
-        before,
-        after,
+        html.elem("div", html.frame(before), attrs: (class: "frame")),
+        html.elem("div", html.frame(after), attrs: (class: "frame")),
       )
         .map(x => html.elem("div", x))
         .join(),
