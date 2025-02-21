@@ -6,6 +6,8 @@ import { extract, FALLBACK_LANG, LANGS } from "./i18n.mjs";
 import { typstQuery } from "./compile.mjs";
 
 /**
+ * todo: looks quite ugly, need to refactor
+ *
  * @param {string} siteUrl The base URL of the website
  * @returns {import("./types.d.ts").NewsMeta[]}
  */
@@ -90,9 +92,10 @@ export const generateNewsList = (siteUrl) => {
 };
 
 /**
+ * Generates the RSS feed
  *
- * @param {string} siteUrl
- * @param {any[]} newsListJson
+ * @param {string} siteUrl The base URL of the website
+ * @param {any[]} newsListJson The news list JSON
  */
 const generateRssFeed = (siteUrl, newsListJson) => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
