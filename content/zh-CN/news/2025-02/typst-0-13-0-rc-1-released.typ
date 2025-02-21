@@ -830,7 +830,7 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
 
   #exp(
     frame: true,
-    ```
+    ```typ
     以下代码可以给文档设置描述
     #set document(description: "简单的 0.13.0-rc1 更新日志")
     ```,
@@ -1020,11 +1020,14 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
     ```,
     align(left)[
       ERR:\
-      Internal error when accessing field "label" in sequence - this is a bug
+      Internal error when accessing\
+      field "label" in sequence\
+       - this is a bug
     ],
     align(left)[
       ERR:\
-      sequence does not have field "foo"
+      sequence does not have field\
+      "foo"
     ],
   )
 
@@ -1109,7 +1112,9 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
     align(left)[ERR: \
       duplicate variant: "bar.foo"
 
-      Hint: variants with the same modifiers are identical, regardless of their order
+      Hint: variants with the same\
+      modifiers are identical, \
+      regardless of their order
     ],
   )
 
@@ -1333,7 +1338,7 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
   之前, 为了产生嵌套的上述元素, 我们必须使用换行和缩进, 比如
   #exp(
     frame: true,
-    ```
+    ```typ
     + first main
     +
       - first sub
@@ -1344,7 +1349,7 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
   现在不需要额外的换行了.
   #exp(
     frame: true,
-    ```
+    ```typ
     + first main
     + - first sub
       - second sub

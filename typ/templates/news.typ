@@ -41,9 +41,10 @@
         ```css
         @media (width >= 48rem) {
           .exp {
+            width: 100%;
             display: grid;
-            grid-template-columns: 50% auto;
-            gap: 0.5em;
+            grid-template-columns: 50% 50%;
+            gap: 1.5em;
           }
         }
 
@@ -59,7 +60,9 @@
           background: #fff;
           padding: 0.5em;
           width: fit-content;
+          max-width: 100%;
           margin: auto;
+          object-fit: contain;
         }
         ```.text,
       )
@@ -91,7 +94,7 @@
       "div",
       (
         left,
-        html.elem("div", right, attrs: (style: "padding: 1em;")),
+        html.elem("div", right, attrs: (style: "padding-bottom: 1em;")),
       )
         .map(x => html.elem("div", x))
         .join(),
@@ -150,7 +153,7 @@
       )
         .map(x => html.elem("div", x))
         .join(),
-      attrs: (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center;"),
+      attrs: (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center; overflow-x: auto;"),
     ),
   )
 }
