@@ -28,14 +28,11 @@
   let tags = tags.at(lang)
   let title = title.at(lang)
 
-  let href = item
-    .content
-    .at(
-      lang,
-      default: item.content.en,
-    )
-    .replace("content/", url-base)
-    .replace(".typ", ".html")
+  let href = item.content.at(
+    lang,
+    default: item.content.en,
+  )
+  let href = news-link(href)
 
   add-rss-feed((
     kind: "news-item",
