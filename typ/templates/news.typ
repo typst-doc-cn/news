@@ -28,6 +28,23 @@
     pre-header: current-title.update(title),
     go-back: news-link("content/index.typ"),
     {
+      style(
+        // 48rem is from tailwindcss, the medium breakpoint.
+        ```css
+        @media (width >= 48rem) {
+          .exp {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            gap: 0.5em;
+          }
+        }
+        @media (width < 48rem) {
+          .exp {
+            display: block;
+          }
+        }
+        ```.text,
+      )
       h1(class: "main-title", title)
       div(
         class: "news-prop",
@@ -52,36 +69,16 @@
   import "/typ/templates/template.typ": *
   block(
     breakable: false,
-    {
-      html.elem(
-        "style",
-        // 48rem is from tailwindcss, the medium breakpoint.
-        ```css
-        @media (width >= 48rem) {
-          .exp {
-            display: grid;
-            grid-template-columns: 50% 50%;
-            gap: 0.5em;
-          }
-        }
-        @media (width < 48rem) {
-          .exp {
-            display: block;
-          }
-        }
-        ```.text,
+    html.elem(
+      "div",
+      (
+        left,
+        html.elem("div", right, attrs: (style: "padding: 1em;")),
       )
-      html.elem(
-        "div",
-        (
-          left,
-          html.elem("div", right, attrs: (style: "padding: 1em;")),
-        )
-          .map(x => html.elem("div", x))
-          .join(),
-        attrs: (class: "exp", style: "margin: 1em 0em;"),
-      )
-    },
+        .map(x => html.elem("div", x))
+        .join(),
+      attrs: (class: "exp", style: "margin: 1em 0em;"),
+    ),
   )
 }
 #let exp(code, frame: false) = {
