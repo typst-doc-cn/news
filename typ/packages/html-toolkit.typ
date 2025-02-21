@@ -43,7 +43,7 @@
   }
 }
 
-#let load-html-template(template-path, content) = {
+#let load-html-template(template-path, content, extra-head: none) = {
   let head-data = xml(template-path).at(0).children.at(1)
   let head = to-html(head-data).body
 
@@ -58,6 +58,7 @@
         "head",
         {
           head
+          extra-head
           context if document.description != none {
             html.elem(
               "meta",

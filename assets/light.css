@@ -1,0 +1,14 @@
+
+html,
+body {
+    color: black;
+}
+
+body {
+    display: block !important;
+    background-color: white;
+}
+
+h1 {
+    color: black;
+}

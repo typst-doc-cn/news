@@ -1,0 +1,24 @@
+
+html,
+body {
+    color: rgba(235, 235, 235, 0.9);
+}
+
+body {
+    display: block !important;
+    background-color: rgb(21, 21, 21);
+}
+
+h1 {
+    color: rgb(241, 245, 249);
+}
+
+a {
+    color: #008AEA;
+    transition: 0.3s;
+}
+
+
+a:hover {
+    opacity: 80%;
+}
