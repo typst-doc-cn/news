@@ -28,6 +28,31 @@
     pre-header: current-title.update(title),
     go-back: news-link("content/index.typ"),
     {
+      style(
+        // 48rem is from tailwindcss, the medium breakpoint.
+        ```css
+        @media (width >= 48rem) {
+          .exp {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            gap: 0.5em;
+          }
+        }
+
+        @media (width < 48rem) {
+          .exp {
+            display: block;
+          }
+        }
+
+        .frame {
+          shadow: 0 0 0.5em rgba(0, 0, 0, 0.1);
+          border-radius: 0.5em;
+          background: #fff;
+          padding: 0.5em;
+        }
+        ```.text,
+      )
       h1(class: "main-title", title)
       div(
         class: "news-prop",
@@ -60,9 +85,7 @@
       )
         .map(x => html.elem("div", x))
         .join(),
-      attrs: {
-        (style: "display: grid; grid-template-columns: 50% 50%; gap: 0.5em; ")
-      },
+      attrs: (class: "exp", style: "margin: 1em 0em;"),
     ),
   )
 }
@@ -75,7 +98,7 @@
     {
       let body = eval(code.text, mode: "markup")
       if frame {
-        html.frame(body)
+        html.elem("div", html.frame(body), attrs: (class: "frame"))
       } else {
         body
       }

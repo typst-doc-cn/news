@@ -76,6 +76,7 @@
 #let a = html-elem.with(tag: "a")
 #let span = html-elem.with(tag: "span")
 #let div = html-elem.with(tag: "div")
+#let style = html-elem.with(tag: "style")
 #let h1 = html-elem.with(tag: "h1")
 #let h2 = html-elem.with(tag: "h2")
 
