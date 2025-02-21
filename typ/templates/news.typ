@@ -67,6 +67,9 @@
   )
 }
 #let exp(code, frame: false) = {
+  if is-meta {
+    return
+  }
   _exp(
     code,
     {
