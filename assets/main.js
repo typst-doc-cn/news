@@ -28,10 +28,15 @@
   };
   const toggleTheme = () => {
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    const href = window.location.href;
+    const hrefWithIndexHtml = !href.endsWith(".html")
+      ? href.replace(/\/$/g, "") +
+        (currentTheme === "dark" ? "/index.html" : "/index.light.html")
+      : href;
     const newUrl = new URL(
       currentTheme === "dark"
-        ? window.location.href.replace(".html", ".light.html")
-        : window.location.href.replace(".light.html", ".html")
+        ? hrefWithIndexHtml.replace(".html", ".light.html")
+        : hrefWithIndexHtml.replace(".light.html", ".html")
     );
 
     reloadTheme(nextTheme, true);
