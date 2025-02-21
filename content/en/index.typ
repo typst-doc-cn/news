@@ -4,7 +4,7 @@
 #show: base-template.with(description: "The recent changes about typst.")
 
 #main-title[
-  Broadsheet
+  Typstown
 ][
   The recent changes about typst.
 ]

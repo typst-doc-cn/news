@@ -1,12 +1,12 @@
 
 #import "../../typ/templates/index.typ": *
 
-#show: base-template.with(description: "Typst 的近期更新")
+#show: base-template.with(description: "Typst 信息汇总")
 
 #main-title[
-  大字报
+  泰普斯屯
 ][
-  Typst 的近期更新
+  Typst信息汇总
 ]
 
 #let news-list-content = news-data.map(news-item.with(lang: "zh-CN"))
