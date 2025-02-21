@@ -89,6 +89,11 @@ export const generateNewsList = (siteUrl) => {
   return newsListJson;
 };
 
+/**
+ *
+ * @param {string} siteUrl
+ * @param {any[]} newsListJson
+ */
 const generateRssFeed = (siteUrl, newsListJson) => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">

@@ -39,6 +39,7 @@ const queryArgs = {
 
 /**
  * Lazily created compiler and watcher
+ * @type {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler | undefined}
  */
 let _compiler = undefined;
 /**
@@ -46,6 +47,9 @@ let _compiler = undefined;
  * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
  */
 export const compiler = () => (_compiler ||= NodeCompiler.create(compileArgs));
+/**
+ * @type {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher | undefined}
+ */
 let _watcher = undefined;
 /**
  *

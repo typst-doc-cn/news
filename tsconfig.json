@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "types": ["./src/global.d.ts"],
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "ES2020",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "stripInternal": true,
+    "strict": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "inlineSourceMap": true,
+    "composite": true
+  },
+  "include": ["scripts/**/*.mjs", "assets/main.js"]
+}

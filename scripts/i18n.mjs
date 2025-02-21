@@ -17,6 +17,9 @@ export const FALLBACK_LANG = "en";
  * @returns {import("./types").I18n<T[K]>}
  */
 export const extract = (raw, key) => {
+  /**
+   * @type {Record<string, any>}
+   */
   const result = {
     [FALLBACK_LANG]: raw[FALLBACK_LANG][key],
   };
