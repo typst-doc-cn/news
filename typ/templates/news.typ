@@ -51,6 +51,7 @@
         @media (width < 48rem) {
           .exp {
             display: block;
+            padding-bottom: 1em;
           }
         }
 
