@@ -8,6 +8,10 @@
 - Package 的更新。
 - Typst 及其相关工具版本的发布。
 
+## RSS
+
+- [RSS in English](https://typst-doc-cn.github.io/news/feed.xml)
+
 ## 内容创作
 
 参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
