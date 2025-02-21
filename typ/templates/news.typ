@@ -135,8 +135,16 @@
     html.elem(
       "div",
       (
-        [曾经],
-        [现在],
+        context if text.lang == "zh" {
+          "曾经"
+        } else {
+          "Before"
+        },
+        context if text.lang == "zh" {
+          "现在"
+        } else {
+          "After"
+        },
         html.elem("div", html.frame(before), attrs: (class: "frame")),
         html.elem("div", html.frame(after), attrs: (class: "frame")),
       )
