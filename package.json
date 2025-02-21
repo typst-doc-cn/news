@@ -11,9 +11,10 @@
   "homepage": "https://typst-doc-cn.github.io/news/",
   "private": true,
   "scripts": {
+    "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs",
     "dev": "node scripts/build.mjs --dev",
-    "gen": "node scripts/generate-news-list.mjs",
+    "gen": "node scripts/generate.mjs",
     "serve": "npx http-server -p 14133"
   },
   "devDependencies": {

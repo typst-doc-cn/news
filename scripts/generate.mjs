@@ -7,7 +7,7 @@ import { typstQuery } from "./compile.mjs";
 
 /**
  * @param {string} siteUrl The base URL of the website
- * @returns
+ * @returns {import("./types.d.ts").NewsMeta[]}
  */
 export const generateNewsList = (siteUrl) => {
   /** @type {Record<string, import("./types.d.ts").I18n<import("./types.d.ts").FileMeta & {content: string}>>} */
