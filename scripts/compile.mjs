@@ -19,9 +19,10 @@ export let hasError = false;
  */
 const compileArgs = {
   workspace: ".",
-  ...(urlBase
-    ? { inputs: { "x-url-base": urlBase, "x-target": "web-light" } }
-    : {}),
+  inputs: {
+    "x-target": "web-light",
+    ...(urlBase ? { "x-url-base": urlBase } : {}),
+  },
 };
 
 /**
@@ -77,7 +78,10 @@ export const compile = (src, dst) => {
     const compileTheme = (theme) => {
       const htmlResult = compiler.mayHtml({
         mainFilePath: src,
-        inputs: { "x-target": `web-${theme}` },
+        inputs: {
+          ...compileArgs.inputs,
+          "x-target": `web-${theme}`,
+        },
       });
 
       hasError = hasError || htmlResult.hasError();
