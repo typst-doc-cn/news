@@ -176,10 +176,10 @@
   show: load-html-template.with("/src/template.html")
   show: zebraw-init.with(
     // should vary by theme
-    background-color: (luma(10), luma(20)),
-    highlight-color: blue.lighten(90%),
-    comment-color: blue.lighten(93%),
-    lang-color: blue.darken(90%),
+    background-color: (rgb("#292e42"), rgb("#24283b")),
+    highlight-color: rgb("#3d59a1"),
+    comment-color: rgb("#394b70"),
+    lang-color: rgb("#3d59a1"),
     lang: true,
   )
   show: zebraw.with(
@@ -189,7 +189,7 @@
   )
   set raw(theme: "/assets/tokyo-night.tmTheme")
   show raw: set text(fill: rgb("#c0caf5"))
-  
+
   pre-header
   header(go-back: go-back)
   div(class: "main-body", content)
