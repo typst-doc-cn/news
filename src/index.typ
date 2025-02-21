@@ -3,10 +3,10 @@
 #let js = ```javascript
 document.addEventListener("DOMContentLoaded", function() {
   let lang = window.navigator.userLanguage || window.navigator.language;
-  if (lang.startsWith("en")) {
-    window.location.href = `{{prefix}}en/`;
+  if (lang.startsWith("zh")) {
+    window.location.href = `{{prefix}}zh-CN/`;
   } else {
-    window.location.href = `{{prefix}}${lang}/`;
+    window.location.href = `{{prefix}}en/`;
   }
 });
 ```
