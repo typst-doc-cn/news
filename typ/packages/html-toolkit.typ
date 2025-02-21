@@ -23,10 +23,17 @@
       data
     }
   } else {
-    let href = data.attrs.at("href", default: none)
-    if href != none and href.starts-with("/") {
-      data.attrs.at("href") = asset-url(href)
+    let rewrite(data, attr) = {
+      let value = data.attrs.at(attr, default: none)
+      if value != none and value.starts-with("/") {
+        data.attrs.at(attr) = asset-url(value)
+      }
+
+      data
     }
+
+    data = rewrite(data, "href")
+    data = rewrite(data, "src")
 
     html.elem(
       data.tag,
