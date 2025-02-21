@@ -51,7 +51,6 @@
         @media (width < 48rem) {
           .exp {
             display: block;
-            padding-bottom: 1em;
           }
         }
 
@@ -95,11 +94,11 @@
       "div",
       (
         left,
-        html.elem("div", right, attrs: (style: "padding-bottom: 1em;")),
+        right,
       )
-        .map(x => html.elem("div", x))
+        .map(x => html.elem("div", x, attrs: (style: "padding-bottom: 1em;")))
         .join(),
-      attrs: (class: "exp", style: "margin: 1em 0em;"),
+      attrs: (class: "exp"),
     ),
   )
 }
@@ -154,7 +153,9 @@
       )
         .map(x => html.elem("div", x))
         .join(),
-      attrs: (style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center; overflow-x: auto;"),
+      attrs: (
+        style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center; overflow-x: auto;",
+      ),
     ),
   )
 }
