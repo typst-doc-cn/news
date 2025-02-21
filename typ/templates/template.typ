@@ -19,7 +19,12 @@
 
 /// Converts a source path to a news link.
 #let news-link(src) = {
-  src.replace("content/", url-base).replace(".typ", ".html")
+  let href = src.replace("content/", url-base).replace(".typ", ".html")
+  if x-is-light {
+    href.replace(".html", ".light.html")
+  } else {
+    href
+  }
 }
 
 /// A font-awesome icon.

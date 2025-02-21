@@ -23,10 +23,18 @@
       )) <front-matter>]
   }
 
+  let locale = if region != none {
+    lang + "-" + region
+  } else if lang != none {
+    lang
+  } else {
+    "en"
+  }
+
   import "/typ/templates/template.typ": *
   base-template(
     pre-header: current-title.update(title),
-    go-back: news-link("content/index.typ"),
+    go-back: news-link("content/" + locale + "/index.typ"),
     {
       style(
         // 48rem is from tailwindcss, the medium breakpoint.
