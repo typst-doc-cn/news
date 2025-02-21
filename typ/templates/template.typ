@@ -131,7 +131,16 @@
         style: "display: flex; flex-direction: row-reverse; gap: 8px;",
         (
           fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news"),
-          fa-icon("/assets/fa-moon.svg", title: "Change to Light Theme"),
+          fa-icon(
+            if x-is-dark {
+              "/assets/fa-moon.svg"
+            } else {
+              "/assets/fa-sun.svg"
+            },
+            class: "theme-button",
+            title: "Change to Light Theme",
+            onclick: "javascript:window.toggleTheme()",
+          ),
           qrcode-button,
           locale-button,
         ).join(),

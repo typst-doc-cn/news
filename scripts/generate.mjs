@@ -1,106 +1,15 @@
 // @ts-check
 
 import fs from "fs";
-import { dirname } from "path";
-import { compile, compiler, query, watcher } from "./utils/typst.mjs";
-import { isDev, siteUrl } from "./utils/args.mjs";
-import { extract, FALLBACK_LANG, LANGS } from "./utils/i18n.mjs";
-
-
-/**
- * Reloads and builds the project
- */
-export const reload = () => {
-  killPreviousTasks();
-  const meta = generateNewsList(siteUrl);
-
-  /**
-   * @param {string} src
-   */
-  const typstContentWatch = (src) => {
-    const dst = src.replace("content/", "dist/").replace(".typ", ".html");
-    const dstDir = dirname(dst);
-    fs.mkdirSync(dstDir, { recursive: true });
-    return typstRun(src, dst);
-  };
-
-  for (const news of meta) {
-    if (news.content.en) {
-      typstContentWatch(news.content.en);
-    }
-    if (news.content["zh-CN"]) {
-      typstContentWatch(news.content["zh-CN"]);
-    }
-  }
-
-  LANGS.forEach((lang) => {
-    const indexSrc = `content/${lang}/index.typ`;
-    const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
-    const indexDst = `dist/${lang}/index.html`;
-    typstRun(
-      fs.existsSync(indexSrc) ? indexSrc : fallbackIndexSrc,
-      indexDst
-    );
-  });
-
-  const indexSrc = "src/index.typ";
-  const indexDst = "dist/index.html";
-  typstRun(indexSrc, indexDst);
-
-  if (isDev) {
-    watcher().watch();
-  }
-};
-
-/**
- * Kills the previous tasks
- */
-let killPreviousTasks = () => {
-  watcher().clear();
-};
-
-
-/**
- * @param {string} src
- * @param {string} dst
- */
-export const typstRun = (src, dst) => {
-  try {
-    if (isDev) {
-      watcher().add([src], compile(src, dst));
-    } else {
-      compile(src, dst)(compiler());
-    }
-  } catch (e) {
-    console.error(e);
-    return;
-  }
-};
-
-/**
- * @param {string} src 
- * @param {string} selector 
- * @param {boolean} one
- * 
- * @returns {import("./types.d.ts").FileMetaElem | undefined}
- */
-const typstQuery = (src, selector, one) => {
-  try {
-    return query(src, selector, one)(compiler());
-  } catch (e) {
-    console.log(`\x1b[1;31mError\x1b[0m ${src}`);
-    console.error(e);
-    return;
-  }
-};
-
+import { siteUrl } from "./args.mjs";
+import { extract, FALLBACK_LANG, LANGS } from "./i18n.mjs";
+import { typstQuery } from "./compile.mjs";
 
 /**
  * @param {string} siteUrl The base URL of the website
  * @returns
  */
 export const generateNewsList = (siteUrl) => {
-
   /** @type {Record<string, import("./types.d.ts").I18n<import("./types.d.ts").FileMeta & {content: string}>>} */
   const i18nFileMeta = {};
 
@@ -128,7 +37,7 @@ export const generateNewsList = (siteUrl) => {
           // @ts-ignore
           [lang]: {
             content: newsPath,
-            ...fileMeta
+            ...fileMeta,
           },
         };
       } else {
@@ -138,7 +47,7 @@ export const generateNewsList = (siteUrl) => {
         if (fileMeta) {
           i18nFileMeta[id][lang] = {
             content: newsPath,
-            ...fileMeta
+            ...fileMeta,
           };
         }
       }
@@ -156,7 +65,6 @@ export const generateNewsList = (siteUrl) => {
   const newsListJson = [];
 
   for (const [id, meta] of Object.entries(i18nFileMeta)) {
-
     newsListJson.push({
       id,
       date: meta[FALLBACK_LANG].date,
@@ -207,3 +115,9 @@ const generateRssFeed = (siteUrl, newsListJson) => {
   fs.writeFileSync("dist/feed.xml", rssFeed);
 };
 
+const thisName = import.meta.url.split("/").pop();
+
+// @ts-ignore
+if (process.argv[1].endsWith(thisName)) {
+  generateNewsList(siteUrl);
+}

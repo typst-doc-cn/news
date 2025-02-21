@@ -118,6 +118,15 @@ body {
     pointer-events:all;
 }
 
+.icon-button {
+    transition: color 0.1s;
+    cursor: pointer;
+}
+
+.icon-button:hover {
+    color: #2267f2;
+}
+
 .qr-code-content {
     display: none;
     /* position: absolute;
