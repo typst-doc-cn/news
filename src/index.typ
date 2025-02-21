@@ -4,9 +4,9 @@
 document.addEventListener("DOMContentLoaded", function() {
   let lang = window.navigator.userLanguage || window.navigator.language;
   if (lang.startsWith("en")) {
-    window.location.href = `{{prefix}}/en/`;
+    window.location.href = `{{prefix}}en/`;
   } else {
-    window.location.href = `{{prefix}}/${lang}/`;
+    window.location.href = `{{prefix}}${lang}/`;
   }
 });
 ```
