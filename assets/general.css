@@ -3,7 +3,6 @@ html,
 body {
     margin: 0;
     padding: 0;
-    color: rgba(235, 235, 235, 0.9);
     font-family: 'Geist', sans-serif;
     /* font-family: 'GeistSans', sans-serif;
     font-size: 16px;
@@ -22,8 +21,6 @@ h1.main-title {
 }
 
 body {
-    display: block !important;
-    background-color: rgb(21, 21, 21);
     margin: 0 10vw;
 }
 
@@ -42,10 +39,6 @@ body {
     margin-top: 2rem;
 }
 
-.main-description {
-    color: rgba(235, 235, 235, 0.6);
-}
-
 .news-list {
     margin: 60px 0;
 }
@@ -59,16 +52,8 @@ body {
     margin: 0;
 }
 
-.news-title a {
-    color: rgba(235, 235, 235, 0.9);
-}
-
-.news-title a:hover {
-    color: rgba(235, 235, 235, 1);
-}
-
 .news-prop {
-    color: rgba(235, 235, 235, 0.4);
+    color: color-mix(in srgb, currentColor 60%, transparent);
     font-size: 12px;
     margin-bottom: 12px;
 }
@@ -77,8 +62,24 @@ body {
     text-align: justify;
 }
 
+.main-description {
+    color: color-mix(in srgb, currentColor 66.66%, transparent);
+}
+
+.news-title a {
+    color: currentColor;
+}
+
+.news-title a:hover {
+    color: currentColor;
+}
+
 .icon-button {
-    color: rgba(235, 235, 235, 0.9);
+    color: currentColor;
+}
+
+.text-link {
+    color: currentColor;
 }
 
 .main-body {
@@ -104,14 +105,10 @@ body {
     border-radius: 4px;
     padding: 2px 4px;
     margin-right: 4px;
-    color: rgba(235, 235, 235, 0.9);
+    color: currentColor;
     text-decoration: none;
     width: 52px;
     text-align: center;
-}
-
-.text-link {
-    color: rgba(235, 235, 235, 0.9);
 }
 
 .qr-code-button {

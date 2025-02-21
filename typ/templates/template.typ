@@ -173,7 +173,33 @@
 
   set document(description: description) if description != none
 
-  show: load-html-template.with("/src/template.html")
+  let preload-css(href) = to-html(
+    xml
+      .decode(
+        ```xml
+        <link
+        rel="preload"
+        as="style"
+        href="{{href}}"
+        onload="this.rel='stylesheet'"
+        />
+        ```
+          .text
+          .replace("{{href}}", href),
+      )
+      .at(0),
+  )
+
+  show: load-html-template.with(
+    "/src/template.html",
+    extra-head: {
+      if x-is-dark {
+        preload-css("/assets/dark.css")
+      } else {
+        preload-css("/assets/light.css")
+      }
+    },
+  )
   show: zebraw-init.with(
     // should vary by theme
     background-color: (rgb("#292e42"), rgb("#24283b")),
