@@ -87,7 +87,7 @@ export const generateNewsList = (siteUrl) => {
     JSON.stringify(newsListJson, null, 2)
   );
 
-  generateRssFeed(siteUrl, newsListJson);
+  generateRssFeed(siteUrl, newsListJson, i18nFileMeta);
   return newsListJson;
 };
 
@@ -96,8 +96,9 @@ export const generateNewsList = (siteUrl) => {
  *
  * @param {string} siteUrl The base URL of the website
  * @param {any[]} newsListJson The news list JSON
+ * @param {any} i18nFileMeta The i18n file meta
  */
-const generateRssFeed = (siteUrl, newsListJson) => {
+const generateRssFeed = (siteUrl, newsListJson, i18nFileMeta) => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   <channel>
@@ -108,11 +109,13 @@ const generateRssFeed = (siteUrl, newsListJson) => {
       .map((news) => {
         const en = news.content.en;
         const dst = en.replace("content/", "/").replace(".typ", ".html");
+        // i18nFileMeta
+        const meta = i18nFileMeta?.[news.id]?.en;
         return `
       <item>
-        <title>${news.title}</title>
+        <title>${meta.title}</title>
         <link>${siteUrl}${dst}</link>
-        <description>${news.description}</description>
+        <description>${meta.description}</description>
         <pubDate>${new Date(news.date).toUTCString()}</pubDate>
       </item>`;
       })
