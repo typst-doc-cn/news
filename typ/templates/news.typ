@@ -38,10 +38,18 @@
             gap: 0.5em;
           }
         }
+
         @media (width < 48rem) {
           .exp {
             display: block;
           }
+        }
+
+        .frame {
+          shadow: 0 0 0.5em rgba(0, 0, 0, 0.1);
+          border-radius: 0.5em;
+          background: #fff;
+          padding: 0.5em;
         }
         ```.text,
       )
@@ -90,7 +98,7 @@
     {
       let body = eval(code.text, mode: "markup")
       if frame {
-        html.frame(body)
+        html.elem("div", html.frame(body), attrs: (class: "frame"))
       } else {
         body
       }
