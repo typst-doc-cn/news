@@ -1,8 +1,9 @@
 export type TFallbackLang = "en";
 
-export interface I18n<T> {
-  [lang: string]: T;
+export type I18n<T> = {
   [key in TFallbackLang]: T;
+} & {
+  [lang: string]: T,
 }
 
 export interface NewsMeta {
