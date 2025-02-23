@@ -168,3 +168,17 @@
 
 /// Creates an embeded block typst frame.
 #let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
+
+
+/// Embeds the raw content into the HTML. Returns `html-elem`
+///
+/// - r (raw): The raw content to embed.
+/// -> content
+#let html-embed(r) = {
+  assert(r.func() == raw, message: "The content must be raw.")
+  if r.lang == "html" {
+    to-html(xml(bytes(r.text)).at(0))
+  } else if r.lang == "css" {
+    style(r.text)
+  }
+}

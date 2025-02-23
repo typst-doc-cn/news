@@ -222,6 +222,7 @@
   )
   set raw(theme: "/assets/tokyo-night.tmTheme") if x-is-dark
   show raw: set text(fill: rgb("#c0caf5")) if x-is-dark
+  show <html-embed>: html-embed
   set text(font: main-font)
 
   /// The HTML content.
