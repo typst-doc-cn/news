@@ -86,7 +86,7 @@ export const compile = (src, dst) => {
      * @param {string} theme The theme to compile
      */
     const compileTheme = (theme) => {
-      const htmlResult = compiler.mayHtml({
+      const htmlResult = compiler.tryHtml({
         mainFilePath: src,
         inputs: {
           ...compileArgs.inputs,
@@ -102,7 +102,7 @@ export const compile = (src, dst) => {
       }
       alreadyHasError = htmlResult.hasError();
 
-      const htmlContent = htmlResult.result;
+      const htmlContent = htmlResult.result?.html();
       if (htmlContent?.length !== undefined) {
         const themeDst =
           theme === "light" ? dst.replace(".html", `.${theme}.html`) : dst;
