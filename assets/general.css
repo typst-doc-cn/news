@@ -24,6 +24,10 @@ body {
     margin: 0 10vw;
 }
 
+.main-body {
+    line-height: 1.8;
+}
+
 .title-container {
     display: flex;
     justify-content: center;
