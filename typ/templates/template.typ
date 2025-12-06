@@ -1,7 +1,6 @@
-
 #import "@preview/tiaoma:0.2.1"
+#import "@preview/zebraw:0.6.1": zebraw, zebraw-init
 #import "/typ/packages/html-toolkit.typ": *
-#import "/typ/packages/zebraw/src/lib.typ": zebraw-init, zebraw-html as zebraw
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -186,8 +185,6 @@
 
 /// The base of all html templates.
 #let base-template(pre-header: none, go-back: none, description: none, content) = {
-  // todo: remove it after the bug is fixed
-  show raw.where(block: false): it => html.elem("code", it.text)
   // Renders the math equations with scrollable div.
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%)) if x-is-dark
   show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
@@ -208,20 +205,27 @@
 
   /// HTML code block supported by zebraw.
   show: zebraw-init.with(
-    // should vary by theme
-    background-color: (rgb("#292e42"), rgb("#24283b")),
-    highlight-color: rgb("#3d59a1"),
-    comment-color: rgb("#394b70"),
-    lang-color: rgb("#3d59a1"),
+    ..if x-is-dark {
+      (
+        background-color: (rgb("#292e42"), rgb("#24283b")),
+        highlight-color: rgb("#3d59a1"),
+        comment-color: rgb("#394b70"),
+        lang-color: rgb("#3d59a1"),
+      )
+    } else if x-is-light {
+      (
+        background-color: (rgb("#fafafa"), rgb("#f3f3f3")),
+      )
+    },
     lang: true,
   )
   show: zebraw.with(
     block-width: 100%,
-    line-width: 100%,
     wrap: false,
   )
   set raw(theme: "/assets/tokyo-night.tmTheme") if x-is-dark
   show raw: set text(fill: rgb("#c0caf5")) if x-is-dark
+
   set text(font: main-font)
 
   /// The HTML content.
