@@ -19,6 +19,8 @@ npm run dev
 npm run serve
 ```
 
+同时运行以上两个进程，然后访问 http://localhost:14133/dist/。
+
 ## 创建新条目
 
 在`content/en/news/date/`目录下创建一个新的 Typst 文件，包含以下内容：
