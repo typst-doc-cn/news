@@ -127,8 +127,8 @@
 /// - href (str): The URL of the CSS file.
 /// -> content
 #let preload-css(href) = to-html(
-  xml
-    .decode(
+  xml(
+    bytes(
       ```xml
       <link
       rel="preload"
@@ -139,8 +139,8 @@
       ```
         .text
         .replace("{{href}}", href),
-    )
-    .at(0),
+    ),
+  ).at(0),
 )
 
 /// Creates a HTML element.
