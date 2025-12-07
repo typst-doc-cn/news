@@ -5,3 +5,7 @@ npm run build -- --url-base=/ && \
 cp -r ./assets/ ./dist
 """
 publish = "dist"
+
+[build.processing.html]
+# Toggling theme (assets/main.js) requires the exact URL structure.
+pretty_urls = false

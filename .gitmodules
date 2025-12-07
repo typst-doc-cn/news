@@ -1,6 +1,3 @@
-[submodule "typ/packages/zebraw"]
-	path = typ/packages/zebraw
-	url = https://github.com/hongjr03/typst-zebraw.git
 [submodule "assets/fonts"]
 	path = assets/fonts
 	url = https://github.com/typst-doc-cn/fonts.git
