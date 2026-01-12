@@ -16,10 +16,9 @@ pnpm run build
 
 ```bash
 pnpm run dev
-pnpm run serve
 ```
 
-同时运行以上两个进程，然后访问 http://localhost:14133/dist/。
+运行以上命令，然后访问 http://localhost:14133/dist/。
 
 ## 创建新条目
 
