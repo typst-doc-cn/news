@@ -3,20 +3,20 @@
 本地预览 HTML 导出还处于实验阶段，因此只能通过脚本构建和预览 HTML 导出，需要 Node.js 环境。
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## 构建（Build）
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ## 持续构建（Watch）
 
 ```bash
-npm run dev
-npm run serve
+pnpm run dev
+pnpm run serve
 ```
 
 同时运行以上两个进程，然后访问 http://localhost:14133/dist/。
@@ -37,7 +37,7 @@ npm run serve
 )
 ```
 
-可以使用翻译软件在下`content/zh-CN/news/date/`为内容添加翻译版本。
+可以使用翻译软件在`content/zh-CN/news/date/`下为内容添加翻译版本。
 
 ## 内容预览
 

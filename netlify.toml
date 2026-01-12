@@ -1,7 +1,7 @@
 [build]
 command = """
-npm install && \
-npm run build -- --url-base=/ && \
+pnpm install && \
+pnpm run build -- --url-base=/ && \
 cp -r ./assets/ ./dist
 """
 publish = "dist"

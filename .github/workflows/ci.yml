@@ -15,14 +15,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Set Node.js 22.x
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 22.x
+          version: 10
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
       - name: Install packages
-        run: npm install
+        run: pnpm install
       - name: Build
-        run: npm run build -- --url-base=/news/
+        run: pnpm run build -- --url-base=/news/
       - name: Copy Static Assets
         run: cp -r ./assets/ ./dist
       - name: Upload artifact
