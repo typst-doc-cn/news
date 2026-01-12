@@ -1,6 +1,6 @@
-import fs from "fs";
+import fs from "node:fs";
 import watch from "glob-watcher";
-import { hasError, compileOrWatch, watcher } from "./compile.ts";
+import { compileOrWatch, hasError, watcher } from "./compile.ts";
 import { isDev, siteUrl } from "./args.ts";
 import { generateNewsList } from "./generate.ts";
 import { dirname } from "path";
@@ -12,14 +12,14 @@ const main = (): void => (isDev ? mainWatch() : mainBuild());
  * Watches the files and rebuilds the project
  */
 const mainWatch = (): void => {
-  // When these files change, we need to reload the documents.
-  const watcher = watch([
+  const globWatcher = watch([
     "content/{en,zh-CN}/news/**/*.typ",
     "content/meta/news-list.json",
     "src/**/*.typ",
   ]);
-  watcher.on("add", reload);
-  watcher.on("remove", reload);
+  // When these files are created or removed, we need to reload the compiler watcher.
+  globWatcher.on("add", reload);
+  globWatcher.on("remove", reload);
 
   // The first reload.
   reload();

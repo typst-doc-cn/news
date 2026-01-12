@@ -20,6 +20,8 @@ pnpm run dev
 
 运行以上命令，然后访问 http://localhost:14133/dist/。
 
+推荐使用 VS Code 编辑文件。在 Windows 上，如果使用 Neovim 或 Helix 编辑，有一定概率检测不到更改，可用 VS Code 编辑一下其它文件触发刷新。
+
 ## 创建新条目
 
 在`content/en/news/date/`目录下创建一个新的 Typst 文件，包含以下内容：
