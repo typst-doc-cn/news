@@ -24,7 +24,7 @@ pnpm run dev
 
 ## 创建新条目
 
-在`content/en/news/date/`目录下创建一个新的 Typst 文件，包含以下内容：
+在`content/news/YYYY-MM/`目录下创建一个新的`SHORT-NAME.en.typ`文件，包含以下内容：
 
 ```typ
 #import "/typ/templates/news.typ": link-news, news-template
@@ -37,10 +37,10 @@ pnpm run dev
   description: "Typst 0.13.0, RC 1 was released.", // 描述
 )
 
-Use `link-news(dest, body)` to link to #link-news("content/en/news/2025-06/gap.typ")[another page].
+Use `link-news(dest, body)` to link to #link-news("content/news/2025-06/gap.en.typ")[another page].
 ```
 
-可以使用翻译软件在`content/zh-CN/news/date/`下为内容添加翻译版本。
+可以使用翻译软件在同目录添加翻译版本`SHORT-NAME.zh-CN.typ`，中文版应标注`lang: "zh", region: "CN"`。
 
 ## 内容预览
 

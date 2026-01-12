@@ -1,10 +1,11 @@
-import fs from "node:fs";
 import watch from "glob-watcher";
-import { compileOrWatch, hasError, watcher } from "./compile.ts";
+import fs from "node:fs";
+import { dirname } from "node:path";
 import { isDev, siteUrl } from "./args.ts";
+import { compileOrWatch, hasError, watcher } from "./compile.ts";
 import { generateNewsList } from "./generate.ts";
-import { dirname } from "path";
 import { FALLBACK_LANG, LANGS } from "./i18n.ts";
+import { toDist } from "./route.ts";
 
 const main = (): void => (isDev ? mainWatch() : mainBuild());
 
@@ -13,7 +14,8 @@ const main = (): void => (isDev ? mainWatch() : mainBuild());
  */
 const mainWatch = (): void => {
   const globWatcher = watch([
-    "content/{en,zh-CN}/news/**/*.typ",
+    "content/index.*.typ",
+    "content/news/**/*.typ",
     "content/meta/news-list.json",
     "src/**/*.typ",
   ]);
@@ -48,7 +50,7 @@ export const reload = (): void => {
    * Watches a regular typst document.
    */
   const makeDoc = (src: string): void => {
-    const dst = src.replace("content/", "dist/").replace(".typ", ".html");
+    const dst = toDist(src);
     const dstDir = dirname(dst);
     fs.mkdirSync(dstDir, { recursive: true });
     compileOrWatch(src, dst);
@@ -68,12 +70,12 @@ export const reload = (): void => {
    * Language-specific index documents.
    */
   LANGS.forEach((lang) => {
-    const langIndexSrc = `content/${lang}/index.typ`;
-    const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
+    const langIndexSrc = `content/index.${lang}.typ`;
+    const fallbackIndexSrc = `content/index.${FALLBACK_LANG}.typ`;
     const indexSrc = fs.existsSync(langIndexSrc)
       ? langIndexSrc
       : fallbackIndexSrc;
-    const indexDst = `dist/${lang}/index.html`;
+    const indexDst = toDist(indexSrc);
     compileOrWatch(indexSrc, indexDst);
   });
   /**

@@ -15,7 +15,7 @@ Hello typst authors and developers!
 We recently updated
 #link("https://typst-doc-cn.github.io/clreq/")[_Chinese Layout Gap Analysis (clreq-gap) for Typst_]
 to v0.14.0. As
-#link-news("content/en/news/2025-06/gap.typ")[introduced before],
+#link-news("content/news/2025-06/gap.en.typ")[introduced before],
 this is a document describing gaps or shortcomings in typst for the
 support of the Chinese script, including text layout and bibliography.
 
@@ -144,7 +144,7 @@ can now be loaded by new Typst, after removing non-standard elements.
 )[Citation numbers are no longer flying over their brackets]
 
 As
-#link-news("content/en/news/2025-06/gap.typ#:~:text=is%20too%20wide-,Invisible%20issues,-Moreover%2C%20I%20think")[mentioned in the previous post],
+#link-news("content/news/2025-06/gap.en.typ#:~:text=is%20too%20wide-,Invisible%20issues,-Moreover%2C%20I%20think")[mentioned in the previous post],
 the Chinese convention for citation numbers is `[1]`. In Typst v0.13.1,
 `1` may fly over `[]`, and the severity depends on the specific
 configuration.

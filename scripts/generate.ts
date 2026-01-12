@@ -1,8 +1,13 @@
-import fs from "fs";
+import fs from "node:fs";
+import { groupBy } from "es-toolkit/array";
 import { siteUrl } from "./args.ts";
 import { extract, FALLBACK_LANG, LANGS } from "./i18n.ts";
 import { typstQuery } from "./compile.ts";
-import type { I18n, FileMeta, NewsMeta } from "./types";
+import { toDist } from "./route.ts";
+import type { FileMeta, I18n, NewsMeta } from "./types";
+
+const NEWS_PATH_PATTERN =
+  /^(?<id>\d{4}-\d{2}\/.+)\.(?<lang>[a-z]{2}(?:-[A-Z]{2})?)\.typ$/;
 
 /**
  * todo: looks quite ugly, need to refactor
@@ -10,51 +15,75 @@ import type { I18n, FileMeta, NewsMeta } from "./types";
  * @param siteUrl The base URL of the website
  */
 export const generateNewsList = (siteUrl: string): NewsMeta[] => {
-  const i18nFileMeta: Record<string, I18n<FileMeta & { content: string; }>> = {};
+  const i18nFileMeta: Record<string, I18n<FileMeta & { content: string }>> = {};
 
-  const travel = (lang: string): void => {
-    const newsDir = `content/${lang}/news`;
+  const travel = (): void => {
+    const newsDir = `content/news`;
     const monthsList: string[] = fs.readdirSync(newsDir);
-    const newsList = monthsList.reduce<string[]>((acc, month) => {
+    const newsList = monthsList.reduce<
+      { path: string; lang: string; id: string }[]
+    >((acc, month) => {
       const monthPath = `${newsDir}/${month}`;
       const news = fs
         .readdirSync(monthPath)
         .filter((news) => news.endsWith(".typ"))
-        .map((news) => `${month}/${news}`);
+        .map((news) => {
+          const newsPath = `${month}/${news}`;
+
+          const m = NEWS_PATH_PATTERN.exec(newsPath);
+          if (!m || !m.groups) {
+            throw new Error(`Failed to parse a news path: ${newsPath}`);
+          }
+          const { lang, id } = m.groups;
+          return { path: `${newsDir}/${newsPath}`, lang, id };
+        });
       return [...acc, ...news];
     }, []);
 
-    for (const newsId of newsList) {
-      const id = newsId.replace(".typ", "");
-      const newsPath = `${newsDir}/${newsId}`;
-      const fileMeta = typstQuery(newsPath, "<front-matter>", true)!.value;
-      if (lang === FALLBACK_LANG) {
-        i18nFileMeta[id] = {
-          [lang]: {
-            content: newsPath,
-            ...fileMeta,
-          },
-        };
-      } else {
+    const newsGroups = groupBy(newsList, ({ id }) => id);
+    for (const [id, newsLangs] of Object.entries(newsGroups)) {
+      const actualLangs = newsLangs.map(({ lang }) => lang);
+      const missingLangs = LANGS.filter((lang) => !actualLangs.includes(lang));
+      if (missingLangs.length > 0) {
+        console.warn(
+          `\x1b[1;93mWarning\x1b[0m News item ${id} will be ignored because some languages are missing: ${
+            missingLangs.join(", ")
+          }`,
+        );
+        continue;
+      }
+
+      for (const { path, lang } of newsLangs) {
+        const fileMeta = typstQuery(path, "<front-matter>", true)!.value;
         if (!i18nFileMeta[id]) {
-          throw new Error(`News ${id} not found in fallback language`);
+          // @ts-ignore: This type error will be fixed after the for-loop is finished.
+          i18nFileMeta[id] = {};
         }
-        if (fileMeta) {
-          i18nFileMeta[id][lang] = {
-            content: newsPath,
-            ...fileMeta,
-          };
-        }
+        i18nFileMeta[id][lang] = {
+          content: path,
+          ...fileMeta,
+        };
+      }
+
+      // Verify that dates are consistent across languages
+      const dates = new Set(
+        Object.values(i18nFileMeta[id]).map(({ date }) => date),
+      );
+      if (dates.size !== 1) {
+        const info = Object.fromEntries(
+          Object.entries(i18nFileMeta[id]).map((
+            [lang, { date }],
+          ) => [lang, date]),
+        );
+        console.warn(
+          `\x1b[1;93mWarning\x1b[0m News item ${id} has inconsistent dates across languages, and ${FALLBACK_LANG}'s will take priority: ${
+            JSON.stringify(info)
+          }`,
+        );
       }
     }
   };
-
-  travel(FALLBACK_LANG);
-  LANGS.forEach((lang) => {
-    if (lang !== FALLBACK_LANG) {
-      travel(lang);
-    }
-  });
+  travel();
 
   const newsListJson: NewsMeta[] = [];
 
@@ -103,7 +132,7 @@ const generateRssFeed = (
     ${newsListJson
       .map((news) => {
         const en = news.content.en;
-        const dst = en.replace("content/", "/").replace(".typ", ".html");
+        const dst = toDist(en).replace("dist/", "/");
         const meta = i18nFileMeta?.[news.id]?.en;
         return `
       <item>

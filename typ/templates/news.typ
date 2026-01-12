@@ -59,7 +59,7 @@
   import "/typ/templates/template.typ": base-template, current-title, news-link
   base-template(
     pre-header: current-title.update(title),
-    go-back: news-link("content/" + locale + "/index.typ"),
+    go-back: news-link("content/index." + locale + ".typ"),
     {
       html.style(
         // 48rem is from tailwindcss, the medium breakpoint.
@@ -112,7 +112,7 @@
 ///
 /// = Example
 /// ```typst
-/// #link-news("content/en/news/2025-06/gap.typ")[another page]
+/// #link-news("content/news/2025-06/gap.en.typ")[another page]
 /// ```
 #let link-news(dest, body) = if not is-meta {
   import "/typ/templates/template.typ": news-data, news-link

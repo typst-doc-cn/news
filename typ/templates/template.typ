@@ -3,6 +3,7 @@
 #import "/typ/packages/html-toolkit.typ": (
   asset-url, div-frame, load-html-template, preload-css, url-base, x-is-dark, x-is-light,
 )
+#import "route.typ": to-dist
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -20,7 +21,7 @@
 
 /// Converts a source path to a news link.
 #let news-link(src) = {
-  let href = src.replace("content/", url-base).replace(".typ", ".html")
+  let href = (url-base + to-dist(src)).replace(".typ", ".html")
   if x-is-light {
     href.replace(".html", ".light.html")
   } else {
