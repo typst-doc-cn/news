@@ -1,4 +1,4 @@
-#import "/typ/templates/news.typ": news-template
+#import "/typ/templates/news.typ": link-news, news-template
 
 #show: news-template.with(
   date: "2025-11-07",
@@ -9,22 +9,12 @@
   description: "我们最近把文档更新到了 v0.14.0。",
 )
 
-#let news-link(dest, body) = context if target() == "html" {
-  // template.typ uses HTML features, which are not supported by typst.ts compiler.query(…).
-  // Therefore, we have to make this import conditional.
-  import "/typ/templates/template.typ": news-link
-  link(news-link(dest), body)
-} else {
-  "Placeholder for "
-  repr((dest: dest, body: body))
-}
-
 #set heading(numbering: (..nums) => numbering("1.1", ..nums.pos().slice(1)))
 
 各位 typst 写作者和开发者，大家好！
 
 我们最近把#link("https://typst-doc-cn.github.io/clreq/")[《Typst 与中文排版的差距分析（clreq-gap for typst）》]更新到了 v0.14.0。
-#news-link("content/zh-CN/news/2025-06/gap.typ")[之前介绍过]，这份文档描述 typst 在中文支持方面的差距，特别是排版和参考文献著录。
+#link-news("content/zh-CN/news/2025-06/gap.typ")[之前介绍过]，这份文档描述 typst 在中文支持方面的差距，特别是排版和参考文献著录。
 
 #link("https://typst-doc-cn.github.io/clreq/")[🔗 Chinese Layout Gap Analysis for Typst. 分析 Typst 与中文排版的差距。]
 
@@ -110,7 +100,7 @@ Typst v0.14.0 不再抛出以上错误。根据#link("https://typst-doc-cn.githu
   "https://typst-doc-cn.github.io/clreq/#cite-number-flying",
 )[引用编号的数字不会再高于括号]
 
-#news-link("content/zh-CN/news/2025-06/gap.typ#:~:text=空隙过宽-,隐藏问题,-此外，我认为")[之前提到]，中文习惯的引用编号格式是`[1]`。在 Typst v0.13.1，`1`可能向上飘出`[]`，严重程度取决于具体设置。
+#link-news("content/zh-CN/news/2025-06/gap.typ#:~:text=空隙过宽-,隐藏问题,-此外，我认为")[之前提到]，中文习惯的引用编号格式是`[1]`。在 Typst v0.13.1，`1`可能向上飘出`[]`，严重程度取决于具体设置。
 
 Typst v0.14.0 在 #link("https://github.com/typst/typst/issues/5777")[\#5777] 修复了上标的定位问题，所以`cite`函数生成的`[1]`也一同修复了。现在#link("https://typst-doc-cn.github.io/clreq/#cite-number-flying")[文档中的两个例子]都正常了。
 

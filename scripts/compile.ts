@@ -155,10 +155,21 @@ export const compileOrWatch = (src: string, dst: string): void => {
 export const query = (src: string, selector: string, one: boolean): any[] | any | undefined => {
   return (compiler: NodeTypstProject): unknown[] | unknown | undefined => {
     try {
+      // Calling `compiler.query` directly only supports the paged target, not html.
+      // Therefore, we have to call `compiler.compileHtml` first.
+      // https://github.com/Myriad-Dreamin/typst.ts/issues/647#issuecomment-2693595551
+      const result = compiler.compileHtml(
+        { mainFilePath: src, ...queryArgs }
+      );
+      if (result.hasError() || result.result === null) {
+        result.printErrors();
+        throw new Error(`Failed to compile ${src} for query.`);
+      }
       const queryData: any[] = compiler.query(
-        { mainFilePath: src, ...queryArgs },
+        result.result,
         { selector }
       );
+
       if (queryData?.length !== undefined) {
         if (one) {
           if (queryData.length !== 1) {

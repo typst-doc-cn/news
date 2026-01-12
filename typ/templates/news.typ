@@ -83,6 +83,17 @@
   )
 }
 
+/// Create a link to other pages.
+///
+/// = Example
+/// ```typst
+/// #link-news("content/en/news/2025-06/gap.typ")[another page]
+/// ```
+#let link-news(dest, body) = if not is-meta {
+  import "/typ/templates/template.typ": news-link
+  link(news-link(dest), body)
+}
+
 #let _exp(left, right) = {
   if is-meta {
     return
