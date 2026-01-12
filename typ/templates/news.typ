@@ -90,7 +90,12 @@
 /// #link-news("content/en/news/2025-06/gap.typ")[another page]
 /// ```
 #let link-news(dest, body) = if not is-meta {
-  import "/typ/templates/template.typ": news-link
+  import "/typ/templates/template.typ": news-data, news-link
+
+  let news-paths = news-data.map(n => n.content.values()).flatten()
+  let path = dest.replace(regex("#.+$"), "")
+  assert(news-paths.contains(path), message: "The destination of a link does not exist: " + dest)
+
   link(news-link(dest), body)
 }
 
