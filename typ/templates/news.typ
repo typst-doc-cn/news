@@ -1,16 +1,41 @@
 #let is-meta = sys.inputs.at("x-meta", default: none) != none
 
-/// Don't worry if you don't write a description. We can generate description automatically
-/// by text exporting the content.
+/// Generate a short description for the content
+#let _excerpt(content, lang: none) = {
+  // Generate a description automatically
+  import "/typ/packages/supports-text.typ": plain-text
+  let slice-most(array, n) = if array.len() <= n { array } else { array.slice(0, n) }
+
+  let plain = plain-text(content)
+  if plain == none {
+    return ""
+  }
+
+  if lang == "en" {
+    slice-most(plain.trim().split(), 40).join(" ")
+  } else {
+    slice-most(plain.trim(), 200)
+  }
+
+  if lang == "zh" { "……" } else { "…" }
+}
+
+/// Don't worry if you don't write a description. We can generate description automatically from the content.
 #let news-template(
   date: none,
   title: none,
   tags: (),
-  description: none,
+  description: auto,
   lang: none,
   region: none,
   content,
 ) = {
+  description = if description == auto {
+    _excerpt(content, lang: lang)
+  } else {
+    description
+  }
+
   set document(title: title, description: description)
   set text(lang: lang, region: region)
 
