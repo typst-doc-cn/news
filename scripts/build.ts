@@ -1,19 +1,17 @@
-// @ts-check
-
 import fs from "fs";
 import watch from "glob-watcher";
-import { hasError, compileOrWatch, watcher } from "./compile.mjs";
-import { isDev, siteUrl } from "./args.mjs";
-import { generateNewsList } from "./generate.mjs";
+import { hasError, compileOrWatch, watcher } from "./compile.ts";
+import { isDev, siteUrl } from "./args.ts";
+import { generateNewsList } from "./generate.ts";
 import { dirname } from "path";
-import { FALLBACK_LANG, LANGS } from "./i18n.mjs";
+import { FALLBACK_LANG, LANGS } from "./i18n.ts";
 
-const main = () => (isDev ? mainWatch() : mainBuild());
+const main = (): void => (isDev ? mainWatch() : mainBuild());
 
 /**
  * Watches the files and rebuilds the project
  */
-const mainWatch = () => {
+const mainWatch = (): void => {
   // When these files change, we need to reload the documents.
   const watcher = watch([
     "content/{en,zh-CN}/news/**/*.typ",
@@ -30,7 +28,7 @@ const mainWatch = () => {
 /**
  * Builds the project
  */
-const mainBuild = () => {
+const mainBuild = (): void => {
   reload();
   if (hasError) {
     process.exit(1);
@@ -40,7 +38,7 @@ const mainBuild = () => {
 /**
  * Reloads and builds the project
  */
-export const reload = () => {
+export const reload = (): void => {
   // Kills the previous watches
   watcher().clear();
   // Gets all the news
@@ -48,14 +46,12 @@ export const reload = () => {
 
   /**
    * Watches a regular typst document.
-   *
-   * @param {string} src
    */
-  const makeDoc = (src) => {
+  const makeDoc = (src: string): void => {
     const dst = src.replace("content/", "dist/").replace(".typ", ".html");
     const dstDir = dirname(dst);
     fs.mkdirSync(dstDir, { recursive: true });
-    return compileOrWatch(src, dst);
+    compileOrWatch(src, dst);
   };
 
   /**

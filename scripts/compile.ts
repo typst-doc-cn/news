@@ -1,23 +1,22 @@
-// @ts-check
-
 import fs from "fs";
 import {
   NodeCompiler,
   ProjectWatcher,
+  type CompileArgs,
+  type NodeTypstProject,
 } from "@myriaddreamin/typst-ts-node-compiler";
-import { isDev, urlBase } from "./args.mjs";
+import { isDev, urlBase } from "./args.ts";
+import type { FileMetaElem } from "./types.ts";
 
 /**
  * The flag for indicating whether there is any error during the build process.
  */
-export let hasError = false;
+export let hasError: boolean = false;
 
 /**
  * The arguments for the compiler.
- *
- * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
  */
-const compileArgs = {
+const compileArgs: CompileArgs = {
   workspace: ".",
   inputs: {
     "x-target": "web-light",
@@ -28,10 +27,8 @@ const compileArgs = {
 
 /**
  * The arguments for querying metadata.
- *
- * @type {import("@myriaddreamin/typst-ts-node-compiler").CompileArgs}
  */
-const queryArgs = {
+const queryArgs: CompileArgs = {
   ...compileArgs,
   inputs: {
     "x-meta": "true",
@@ -41,51 +38,46 @@ const queryArgs = {
 
 /**
  * Lazily created compiler.
- * @type {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler | undefined}
  */
-let _compiler = undefined;
+let _compiler: NodeCompiler | undefined = undefined;
 /**
  * Lazily created compiler.
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").NodeCompiler}
  */
-export const compiler = () => (_compiler ||= NodeCompiler.create(compileArgs));
-/**
- * @type {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher | undefined}
- */
-let _watcher = undefined;
+export const compiler = (): NodeCompiler =>
+  (_compiler ||= NodeCompiler.create(compileArgs));
+
+let _watcher: ProjectWatcher | undefined = undefined;
 /**
  * Lazily created watcher
- * @returns {import("@myriaddreamin/typst-ts-node-compiler").ProjectWatcher}
  */
-export const watcher = () => (_watcher ||= ProjectWatcher.create(compileArgs));
+export const watcher = (): ProjectWatcher =>
+  (_watcher ||= ProjectWatcher.create(compileArgs));
 
 /**
  * Common getter for the compiler or watcher.
  */
-export const compilerOrWatcher = () => _compiler || _watcher;
+export const compilerOrWatcher = (): NodeCompiler | ProjectWatcher | undefined =>
+  _compiler || _watcher;
 
 /**
  * Compiles the source file to the destination file.
  *
- * @param {string} src The source file path
- * @param {string} dst The destination file path
+ * @param src The source file path
+ * @param dst The destination file path
  *
  * @example
  * compile("src/index.typ", "dist/index.html")(compiler());
  */
-export const compile = (src, dst) => {
-  /**
-   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
-   */
-  return (compiler) => {
+export const compile = (src: string, dst: string) => {
+  return (compiler: NodeTypstProject): void => {
     let alreadyHasError = false;
 
     /**
      * Theme-specific compilation
      *
-     * @param {string} theme The theme to compile
+     * @param theme The theme to compile
      */
-    const compileTheme = (theme) => {
+    const compileTheme = (theme: string): void => {
       const htmlResult = compiler.tryHtml({
         mainFilePath: src,
         inputs: {
@@ -129,13 +121,13 @@ export const compile = (src, dst) => {
  *
  * All the errors are caught and printed to the console.
  *
- * @param {string} src The source file path
- * @param {string} dst The destination file path
+ * @param src The source file path
+ * @param dst The destination file path
  *
  * @example
  * compileOrWatch("src/index.typ", "dist/index.html");
  */
-export const compileOrWatch = (src, dst) => {
+export const compileOrWatch = (src: string, dst: string): void => {
   try {
     if (isDev) {
       watcher().add([src], compile(src, dst));
@@ -153,25 +145,17 @@ export const compileOrWatch = (src, dst) => {
  *
  * All the errors are caught and printed to the console.
  *
- * @param {string} src The source file path.
- * @param {string} selector The selector for the query.
- * @param {boolean} one Casts the result to a single element if the result is an array and the length is 1.
- *
- * @returns {any[] | any | undefined}
+ * @param src The source file path.
+ * @param selector The selector for the query.
+ * @param one Casts the result to a single element if the result is an array and the length is 1.
  *
  * @example
  * query("src/index.typ", "<rss-feed>", true)(compiler());
  */
-export const query = (src, selector, one) => {
-  /**
-   * @param {import("@myriaddreamin/typst-ts-node-compiler").NodeTypstProject} compiler
-   */
-  return (compiler) => {
+export const query = (src: string, selector: string, one: boolean): any[] | any | undefined => {
+  return (compiler: NodeTypstProject): unknown[] | unknown | undefined => {
     try {
-      /**
-       * @type {any[]}
-       */
-      const queryData = compiler.query(
+      const queryData: any[] = compiler.query(
         { mainFilePath: src, ...queryArgs },
         { selector }
       );
@@ -196,13 +180,15 @@ export const query = (src, selector, one) => {
 /**
  * User trigger queries the source file to the destination file or watches the source file
  *
- * @param {string} src The source file path.
- * @param {string} selector The selector for the query.
- * @param {boolean} one Casts the result to a single element if the result is an array and the length is 1.
- *
- * @returns {import("./types").FileMetaElem | undefined}
+ * @param src The source file path.
+ * @param selector The selector for the query.
+ * @param one Casts the result to a single element if the result is an array and the length is 1.
  */
-export const typstQuery = (src, selector, one) => {
+export const typstQuery = (
+  src: string,
+  selector: string,
+  one: boolean
+): FileMetaElem | undefined => {
   try {
     return query(src, selector, one)(compiler());
   } catch (e) {

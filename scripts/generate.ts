@@ -1,27 +1,21 @@
-// @ts-check
-
 import fs from "fs";
-import { siteUrl } from "./args.mjs";
-import { extract, FALLBACK_LANG, LANGS } from "./i18n.mjs";
-import { typstQuery } from "./compile.mjs";
+import { siteUrl } from "./args.ts";
+import { extract, FALLBACK_LANG, LANGS } from "./i18n.ts";
+import { typstQuery } from "./compile.ts";
+import type { I18n, FileMeta, NewsMeta } from "./types";
 
 /**
  * todo: looks quite ugly, need to refactor
  *
- * @param {string} siteUrl The base URL of the website
- * @returns {import("./types.d.ts").NewsMeta[]}
+ * @param siteUrl The base URL of the website
  */
-export const generateNewsList = (siteUrl) => {
-  /** @type {Record<string, import("./types.d.ts").I18n<import("./types.d.ts").FileMeta & {content: string}>>} */
-  const i18nFileMeta = {};
+export const generateNewsList = (siteUrl: string): NewsMeta[] => {
+  const i18nFileMeta: Record<string, I18n<FileMeta & { content: string; }>> = {};
 
-  /** @param {string} lang */
-  const travel = (lang) => {
+  const travel = (lang: string): void => {
     const newsDir = `content/${lang}/news`;
-    const monthsList = fs.readdirSync(newsDir);
-    /** @type {string[]} */
-    // @ts-ignore
-    const newsList = monthsList.reduce((acc, month) => {
+    const monthsList: string[] = fs.readdirSync(newsDir);
+    const newsList = monthsList.reduce<string[]>((acc, month) => {
       const monthPath = `${newsDir}/${month}`;
       const news = fs
         .readdirSync(monthPath)
@@ -33,10 +27,9 @@ export const generateNewsList = (siteUrl) => {
     for (const newsId of newsList) {
       const id = newsId.replace(".typ", "");
       const newsPath = `${newsDir}/${newsId}`;
-      const fileMeta = typstQuery(newsPath, "<front-matter>", true)?.value;
+      const fileMeta = typstQuery(newsPath, "<front-matter>", true)!.value;
       if (lang === FALLBACK_LANG) {
         i18nFileMeta[id] = {
-          // @ts-ignore
           [lang]: {
             content: newsPath,
             ...fileMeta,
@@ -63,8 +56,7 @@ export const generateNewsList = (siteUrl) => {
     }
   });
 
-  /** @type {import("./types.d.ts").NewsMeta[]} */
-  const newsListJson = [];
+  const newsListJson: NewsMeta[] = [];
 
   for (const [id, meta] of Object.entries(i18nFileMeta)) {
     newsListJson.push({
@@ -78,8 +70,7 @@ export const generateNewsList = (siteUrl) => {
   }
   // latest first
   newsListJson.sort((a, b) => {
-    // @ts-ignore
-    return new Date(b.date) - new Date(a.date);
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
   fs.writeFileSync(
@@ -94,11 +85,15 @@ export const generateNewsList = (siteUrl) => {
 /**
  * Generates the RSS feed
  *
- * @param {string} siteUrl The base URL of the website
- * @param {any[]} newsListJson The news list JSON
- * @param {any} i18nFileMeta The i18n file meta
+ * @param siteUrl The base URL of the website
+ * @param newsListJson The news list JSON
+ * @param i18nFileMeta The i18n file meta
  */
-const generateRssFeed = (siteUrl, newsListJson, i18nFileMeta) => {
+const generateRssFeed = (
+  siteUrl: string,
+  newsListJson: NewsMeta[],
+  i18nFileMeta: Record<string, I18n<FileMeta & { content: string; }>>
+): void => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   <channel>
@@ -109,7 +104,6 @@ const generateRssFeed = (siteUrl, newsListJson, i18nFileMeta) => {
       .map((news) => {
         const en = news.content.en;
         const dst = en.replace("content/", "/").replace(".typ", ".html");
-        // i18nFileMeta
         const meta = i18nFileMeta?.[news.id]?.en;
         return `
       <item>
@@ -126,9 +120,8 @@ const generateRssFeed = (siteUrl, newsListJson, i18nFileMeta) => {
   fs.writeFileSync("dist/feed.xml", rssFeed);
 };
 
-const thisName = import.meta.url.split("/").pop();
+const thisName = import.meta.url.split("/").pop()!;
 
-// @ts-ignore
 if (process.argv[1].endsWith(thisName)) {
   generateNewsList(siteUrl);
 }

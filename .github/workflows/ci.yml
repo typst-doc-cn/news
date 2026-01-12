@@ -24,6 +24,7 @@ jobs:
           cache: pnpm
       - name: Install packages
         run: pnpm install
+      - run: pnpm check-types
       - name: Build
         run: pnpm run build -- --url-base=/news/
       - name: Copy Static Assets
