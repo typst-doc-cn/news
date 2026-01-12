@@ -3,11 +3,11 @@
 /// This package provides a set of utility functions for working with HTML export.
 
 
-#import "supports-text.typ": *
+#import "supports-text.typ": plain-text
 
 /// The target for the HTML export.
 ///
-/// Avaiable targets:
+/// Available targets:
 /// - `web-light`: Light theme for web.
 /// - `web-dark`: Dark theme for web.
 /// - `pdf`: PDF export.
@@ -68,27 +68,6 @@
     )
   }
 }
-// html.elem(
-//               "meta",
-//               attrs: (
-//                 "name": "description",
-//                 "content": plain-text(document.description),
-//               ),
-//             )
-//
-
-/// Creats a ```html <meta>``` tag for the ```html <head>```.
-///
-/// - name (str): The name of the meta tag.
-/// - content (str): The content of the meta tag.
-/// -> content
-#let head-meta(name, content) = html.elem(
-  "meta",
-  attrs: (
-    "name": name,
-    "content": content,
-  ),
-)
 
 /// Loads the HTML template and inserts the content.
 ///
@@ -107,17 +86,14 @@
       "xmlns": "http://www.w3.org/1999/xhtml",
     ),
     {
-      html.elem(
-        "head",
-        {
-          head
-          extra-head
-          context if document.description != none {
-            head-meta("description", plain-text(document.description))
-          }
-        },
-      )
-      html.elem("body", content)
+      html.head({
+        head
+        extra-head
+        context if document.description != none {
+          html.meta(name: "description", content: plain-text(document.description))
+        }
+      })
+      html.body(content)
     },
   )
 }
@@ -143,28 +119,5 @@
   ).at(0),
 )
 
-/// Creates a HTML element.
-///
-/// - content (content): The content of the element.
-/// - tag (str): The tag of the element.
-#let html-elem(content, ..attrs, tag: "div") = html.elem(
-  tag,
-  content,
-  attrs: attrs.named(),
-)
-
-/// Creates a ```html <a>``` element with the given content.
-#let a = html-elem.with(tag: "a")
-/// Creates a ```html <span>``` element with the given content.
-#let span = html-elem.with(tag: "span")
-/// Creates a ```html <div>``` element with the given content.
-#let div = html-elem.with(tag: "div")
-/// Creates a ```html <style>``` element with the given content.
-#let style = html-elem.with(tag: "style")
-/// Creates a ```html <h1>``` element with the given content.
-#let h1 = html-elem.with(tag: "h1")
-/// Creates a ```html <h2>``` element with the given content.
-#let h2 = html-elem.with(tag: "h2")
-
-/// Creates an embeded block typst frame.
-#let div-frame(content, attrs: (:)) = html.elem("div", html.frame(content), attrs: attrs)
+/// Creates an embedded block typst frame.
+#let div-frame(content, ..attrs) = html.div(html.frame(content), ..attrs)

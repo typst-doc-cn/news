@@ -18,12 +18,9 @@ document.addEventListener("DOMContentLoaded", function() {
     "xmlns": "http://www.w3.org/1999/xhtml",
   ),
   {
-    html.elem(
-      "head",
-      {
-        html.elem("script", js.text.replace("{{prefix}}", url-base))
-      },
+    html.head(
+      html.script(js.text.replace("{{prefix}}", url-base)),
     )
-    html.elem("body", html.elem("h1", "Redirecting..."))
+    html.body(html.h1("Redirecting..."))
   },
 )

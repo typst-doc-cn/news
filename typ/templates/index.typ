@@ -1,12 +1,11 @@
-
-#import "/typ/templates/template.typ": *
+#import "/typ/templates/template.typ": base-template, news-link
 
 #let main-title(title, description) = {
-  div(
+  html.div(
     class: "title-container",
     {
-      h1(class: "main-title", title)
-      div(class: "main-description", description)
+      html.h1(class: "main-title", title)
+      html.div(class: "main-description", description)
     },
   )
 }
@@ -16,7 +15,7 @@
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
 
 #let news-list(news) = {
-  div(
+  html.div(
     class: "news-list",
     news,
   )
@@ -38,15 +37,15 @@
     kind: "news-item",
     data: item,
   ))
-  div(
+  html.div(
     class: "news-item",
     {
-      h2(
+      html.h2(
         class: "news-title",
-        a(href: href, title),
+        html.a(href: href, title),
       )
 
-      div(
+      html.div(
         class: "news-prop",
         {
           "Published At: "
@@ -56,8 +55,8 @@
           tags.join(", ")
         },
       )
-      // div(class: "news-tags", tags)
-      div(class: "news-description", description)
+      // html.div(class: "news-tags", tags)
+      html.div(class: "news-description", description)
     },
   )
 }
