@@ -26,6 +26,7 @@ export interface FileMeta {
   description: string;
   tags: string[];
   title: string;
+  'redirect-from': string[];
 }
 
 export type FileMetaElem = {

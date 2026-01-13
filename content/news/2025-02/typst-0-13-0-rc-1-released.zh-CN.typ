@@ -1009,7 +1009,7 @@ Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.a
 
   #pr(
     5571,
-    [Change error when accessing non-existant label],
+    [Change error when accessing non-existent label],
     type: fix,
   )
   优化了某些情况下访问不存在的字段的错误提示.

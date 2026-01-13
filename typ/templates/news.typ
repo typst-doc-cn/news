@@ -28,6 +28,8 @@
   description: auto,
   lang: none,
   region: none,
+  // If this file has been renamed, redirect from the old path, e.g., `("content/news/2024-12/typos.en.typ",)`.
+  redirect-from: (),
   content,
 ) = {
   description = if description == auto {
@@ -45,6 +47,7 @@
       date: date,
       description: description,
       tags: tags,
+      redirect-from: redirect-from,
     )) <front-matter>]
   }
 
