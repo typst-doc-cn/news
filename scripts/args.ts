@@ -1,12 +1,9 @@
-// @ts-check
-
 /**
  * Parses a long argument from the command line.
  *
- * @param {string} argName name of the argument without `--`
- * @returns
+ * @param argName name of the argument without `--`
  */
-export const parseArg = (argName) =>
+export const parseArg = (argName: string): string | undefined =>
   [process.argv.find((arg) => arg.startsWith(`--${argName}=`))].map((arg) => {
     if (arg) {
       return arg.split("=")[1];
@@ -24,13 +21,13 @@ export const isDev = process.argv.includes("--dev");
  *
  * For example, if the website is hosted at `https://example.com/news/`, then the URL base is `/news/`.
  */
-export const urlBase = parseArg("url-base");
+export const urlBase: string | undefined = parseArg("url-base");
 
 /**
  * The site URL for the project.
  *
  * For example, if the website is hosted at `https://example.com/news/`, then the site URL is `https://example.com`.
  */
-export const siteUrl = (
+export const siteUrl: string = (
   parseArg("site-url") || "https://typst-doc-cn.github.io/news"
 ).replace(/\/$/, "");

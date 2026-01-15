@@ -21,6 +21,8 @@
     plain-text(it.body)
   } else if f == text or f == raw {
     it.text
+  } else if f == parbreak {
+    " "
   } else if f == smartquote {
     if it.double {
       "\""

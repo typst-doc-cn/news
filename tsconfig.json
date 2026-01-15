@@ -6,6 +6,8 @@
     "target": "ES2020",
     "skipLibCheck": true,
     "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "noImplicitAny": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
@@ -21,5 +23,5 @@
     "inlineSourceMap": true,
     "composite": true
   },
-  "include": ["scripts/**/*.mjs", "assets/main.js"]
+  "include": ["scripts/**/*.ts", "assets/main.js"]
 }

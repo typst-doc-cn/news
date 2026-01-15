@@ -1,26 +1,54 @@
 #let is-meta = sys.inputs.at("x-meta", default: none) != none
 
-/// Don't worry if you don't write a description. We can generate description automatically
-/// by text exporting the content.
+/// Generate a short description for the content
+#let _excerpt(content, lang: none) = {
+  // Generate a description automatically
+  import "/typ/packages/supports-text.typ": plain-text
+  let slice-most(array, n) = if array.len() <= n { array } else { array.slice(0, n) }
+
+  let plain = plain-text(content)
+  if plain == none {
+    return ""
+  }
+
+  if lang == "en" {
+    slice-most(plain.trim().split(), 40).join(" ")
+  } else {
+    slice-most(plain.trim(), 200)
+  }
+
+  if lang == "zh" { "……" } else { "…" }
+}
+
+/// Don't worry if you don't write a description. We can generate description automatically from the content.
 #let news-template(
   date: none,
   title: none,
   tags: (),
-  description: none,
+  description: auto,
   lang: none,
   region: none,
+  // If this file has been renamed, redirect from the old path, e.g., `("content/news/2024-12/typos.en.typ",)`.
+  redirect-from: (),
   content,
 ) = {
+  description = if description == auto {
+    _excerpt(content, lang: lang)
+  } else {
+    description
+  }
+
   set document(title: title, description: description)
   set text(lang: lang, region: region)
 
   if is-meta {
     return [#metadata((
-        title: title,
-        date: date,
-        description: description,
-        tags: tags,
-      )) <front-matter>]
+      title: title,
+      date: date,
+      description: description,
+      tags: tags,
+      redirect-from: redirect-from,
+    )) <front-matter>]
   }
 
   let locale = if region != none {
@@ -31,12 +59,12 @@
     "en"
   }
 
-  import "/typ/templates/template.typ": *
+  import "/typ/templates/template.typ": base-template, current-title, news-link
   base-template(
     pre-header: current-title.update(title),
-    go-back: news-link("content/" + locale + "/index.typ"),
+    go-back: news-link("content/index." + locale + ".typ"),
     {
-      style(
+      html.style(
         // 48rem is from tailwindcss, the medium breakpoint.
         ```css
         @media (width >= 48rem) {
@@ -66,8 +94,8 @@
         }
         ```.text,
       )
-      h1(class: "main-title", title)
-      div(
+      html.h1(class: "main-title", title)
+      html.div(
         class: "news-prop",
         {
           "Published At: " + date
@@ -75,7 +103,7 @@
           "Tags: " + tags.join(", ")
         },
       )
-      div(
+      html.div(
         class: "news-body",
         content,
       )
@@ -83,22 +111,36 @@
   )
 }
 
+/// Create a link to other pages.
+///
+/// = Example
+/// ```typst
+/// #link-news("content/news/2025-06/gap.en.typ")[another page]
+/// ```
+#let link-news(dest, body) = if not is-meta {
+  import "/typ/templates/template.typ": news-data, news-link
+
+  let news-paths = news-data.map(n => n.content.values()).flatten()
+  let path = dest.replace(regex("#.+$"), "")
+  assert(news-paths.contains(path), message: "The destination of a link does not exist: " + dest)
+
+  link(news-link(dest), body)
+}
+
 #let _exp(left, right) = {
   if is-meta {
     return
   }
-  import "/typ/templates/template.typ": *
   block(
     breakable: false,
-    html.elem(
-      "div",
+    html.div(
       (
         left,
         right,
       )
-        .map(x => html.elem("div", x, attrs: (style: "padding-bottom: 1em;")))
+        .map(x => html.div(x, style: "padding-bottom: 1em;"))
         .join(),
-      attrs: (class: "exp"),
+      class: "exp",
     ),
   )
 }
@@ -116,7 +158,7 @@
         args.at(0)
       }
       if frame {
-        html.elem("div", html.frame(body), attrs: (class: "frame"))
+        html.div(html.frame(body), class: "frame")
       } else {
         body
       }
@@ -135,8 +177,7 @@
   }
   _exp(
     code,
-    html.elem(
-      "div",
+    html.div(
       (
         context if text.lang == "zh" {
           "曾经"
@@ -148,14 +189,12 @@
         } else {
           "After"
         },
-        html.elem("div", html.frame(before), attrs: (class: "frame")),
-        html.elem("div", html.frame(after), attrs: (class: "frame")),
+        html.div(html.frame(before), class: "frame"),
+        html.div(html.frame(after), class: "frame"),
       )
-        .map(x => html.elem("div", x))
+        .map(html.div)
         .join(),
-      attrs: (
-        style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center; overflow-x: auto;",
-      ),
+      style: "display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; text-align: center; overflow-x: auto;",
     ),
   )
 }

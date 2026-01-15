@@ -1,6 +1,9 @@
-#import "@preview/tiaoma:0.2.1"
+#import "@preview/tiaoma:0.3.0"
 #import "@preview/zebraw:0.6.1": zebraw, zebraw-init
-#import "/typ/packages/html-toolkit.typ": *
+#import "/typ/packages/html-toolkit.typ": (
+  asset-url, div-frame, load-html-template, preload-css, url-base, x-is-dark, x-is-light,
+)
+#import "route.typ": to-dist
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -18,7 +21,7 @@
 
 /// Converts a source path to a news link.
 #let news-link(src) = {
-  let href = src.replace("content/", url-base).replace(".typ", ".html")
+  let href = (url-base + to-dist(src)).replace(".typ", ".html")
   if x-is-light {
     href.replace(".html", ".light.html")
   } else {
@@ -33,34 +36,45 @@
 /// - class (str): The class of the icon
 /// - attrs (dict): The extra attributes of the icon.
 /// -> The icon content.
-#let fa-icon(path, content: none, class: none, ..attrs) = a(
-  class: "icon-button"
-    + if class != none {
-      " "
-      class
+#let fa-icon(path, content: none, class: none, ..attrs) = {
+  assert.eq(attrs.pos(), (), message: "fa-icon only supports named attributes.")
+  let attrs = attrs.named()
+  let unknown-keys = attrs.keys().filter(k => not ("title", "href", "onclick").contains(k))
+  assert.eq(unknown-keys, (), message: "fa-icon does not support some attributes: " + repr(unknown-keys))
+
+  // We can't use `html.a` here, because it does not support `onclick`.
+  html.elem(
+    "a",
+    attrs: (
+      class: "icon-button"
+        + if class != none {
+          " "
+          class
+        },
+      ..attrs,
+    ),
+    {
+      html.div(
+        style: {
+          "flex: 24px; width: 24px; height: 24px; background: currentColor; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; mask-image: url(\""
+          asset-url(path)
+          "\"); "
+          "-webkit-mask-image: url(\""
+          asset-url(path)
+          "\");"
+        },
+        "",
+      )
+      content
     },
-  ..attrs,
-  {
-    div(
-      style: {
-        "flex: 24px; width: 24px; height: 24px; background: currentColor; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; mask-image: url(\""
-        asset-url(path)
-        "\"); "
-        "-webkit-mask-image: url(\""
-        asset-url(path)
-        "\");"
-      },
-      "",
-    )
-    content
-  },
-)
+  )
+}
 
 /// A QR code button.
 #let qrcode-button = fa-icon(
   "/assets/fa-qr-code.svg",
   class: "qr-code-button",
-  content: div(
+  content: html.div(
     class: "qr-code-content",
     context {
       let item = news-item()
@@ -112,7 +126,7 @@
 
       let goal-href = item.content.at(next-locale)
       if goal-href != none {
-        a(class: "top-text-button", title: "Switch Language", href: news-link(goal-href), locale)
+        html.a(class: "top-text-button", title: "Switch Language", href: news-link(goal-href), locale)
       }
     }
   }
@@ -120,10 +134,10 @@
 
 /// The header of the page.
 #let header(go-back: none) = {
-  div(
+  html.div(
     class: "main-header",
     {
-      div(
+      html.div(
         style: "display: flex; flex-direction: row; gap: 8px;",
         {
           if go-back != none {
@@ -131,38 +145,35 @@
           }
         },
       )
-      div(
-        style: "display: flex; flex-direction: row-reverse; gap: 8px;",
-        (
-          fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news"),
-          fa-icon(
-            if x-is-dark {
-              "/assets/fa-moon.svg"
-            } else {
-              "/assets/fa-sun.svg"
-            },
-            class: "theme-button",
-            title: "Change to Light Theme",
-            onclick: "javascript:window.toggleTheme()",
-          ),
-          qrcode-button,
-          locale-button,
-        ).join(),
-      )
+      html.div(style: "display: flex; flex-direction: row-reverse; gap: 8px;", {
+        fa-icon("/assets/fa-github.svg", title: "GitHub", href: "https://github.com/typst-doc-cn/news")
+        fa-icon(
+          if x-is-dark {
+            "/assets/fa-moon.svg"
+          } else {
+            "/assets/fa-sun.svg"
+          },
+          class: "theme-button",
+          title: "Change to Light Theme",
+          onclick: "javascript:window.toggleTheme()",
+        )
+        qrcode-button
+        locale-button
+      })
     },
   )
 }
 
 /// The footer of the page.
 #let footer = {
-  div(
+  html.div(
     class: "main-footer",
     {
       "© 2023-2025 "
-      a(class: "text-link", { "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
+      html.a(class: "text-link", { "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
       " All Rights Reserved. "
       "Powered by "
-      a(class: "text-link", " Typst.", href: "https://github.com/typst/typst")
+      html.a(class: "text-link", " Typst.", href: "https://github.com/typst/typst")
     },
   )
 }
@@ -187,7 +198,7 @@
 #let base-template(pre-header: none, go-back: none, description: none, content) = {
   // Renders the math equations with scrollable div.
   show math.equation: set text(fill: color.rgb(235, 235, 235, 90%)) if x-is-dark
-  show math.equation: div-frame.with(attrs: ("style": "display: flex; justify-content: center; overflow-x: auto;"))
+  show math.equation: div-frame.with(style: "display: flex; justify-content: center; overflow-x: auto;")
   /// The description of the document.
   set document(description: description) if description != none
   /// Wraps the following content with the HTML template.
@@ -231,6 +242,6 @@
   /// The HTML content.
   pre-header
   header(go-back: go-back)
-  div(class: "main-body", content)
+  html.div(class: "main-body", content)
   footer
 }

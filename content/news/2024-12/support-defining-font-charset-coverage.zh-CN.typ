@@ -8,6 +8,10 @@
   region: "CN",
   tags: ("pr",),
   description: "此 PR 支持了定义字体覆盖的字符集。",
+  redirect-from: (
+   // coverage was misspelled previously
+    "content/news/2024-12/support-defining-font-charset-converage.zh-CN.typ",
+  ),
 )
 
 现在可以手动指定哪些字符使用什么字体.

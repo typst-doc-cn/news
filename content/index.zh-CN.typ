@@ -1,5 +1,4 @@
-
-#import "../../typ/templates/index.typ": *
+#import "/typ/templates/index.typ": base-template, main-title, news-data, news-item, news-list
 
 #show: base-template.with(description: "Typst 信息汇总")
 

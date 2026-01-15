@@ -1,27 +1,27 @@
-// @ts-check
-
-import fs from "fs";
 import watch from "glob-watcher";
-import { hasError, compileOrWatch, watcher } from "./compile.mjs";
-import { isDev, siteUrl } from "./args.mjs";
-import { generateNewsList } from "./generate.mjs";
-import { dirname } from "path";
-import { FALLBACK_LANG, LANGS } from "./i18n.mjs";
+import fs from "node:fs";
+import { dirname } from "node:path";
+import { isDev, siteUrl } from "./args.ts";
+import { compileOrWatch, hasError, watcher } from "./compile.ts";
+import { generateNewsList } from "./generate.ts";
+import { FALLBACK_LANG, LANGS } from "./i18n.ts";
+import { toDist } from "./route.ts";
 
-const main = () => (isDev ? mainWatch() : mainBuild());
+const main = (): void => (isDev ? mainWatch() : mainBuild());
 
 /**
  * Watches the files and rebuilds the project
  */
-const mainWatch = () => {
-  // When these files change, we need to reload the documents.
-  const watcher = watch([
-    "content/{en,zh-CN}/news/**/*.typ",
+const mainWatch = (): void => {
+  const globWatcher = watch([
+    "content/index.*.typ",
+    "content/news/**/*.typ",
     "content/meta/news-list.json",
     "src/**/*.typ",
   ]);
-  watcher.on("add", reload);
-  watcher.on("remove", reload);
+  // When these files are created or removed, we need to reload the compiler watcher.
+  globWatcher.on("add", reload);
+  globWatcher.on("remove", reload);
 
   // The first reload.
   reload();
@@ -30,7 +30,7 @@ const mainWatch = () => {
 /**
  * Builds the project
  */
-const mainBuild = () => {
+const mainBuild = (): void => {
   reload();
   if (hasError) {
     process.exit(1);
@@ -40,7 +40,7 @@ const mainBuild = () => {
 /**
  * Reloads and builds the project
  */
-export const reload = () => {
+export const reload = (): void => {
   // Kills the previous watches
   watcher().clear();
   // Gets all the news
@@ -48,14 +48,12 @@ export const reload = () => {
 
   /**
    * Watches a regular typst document.
-   *
-   * @param {string} src
    */
-  const makeDoc = (src) => {
-    const dst = src.replace("content/", "dist/").replace(".typ", ".html");
+  const makeDoc = (src: string): void => {
+    const dst = toDist(src);
     const dstDir = dirname(dst);
     fs.mkdirSync(dstDir, { recursive: true });
-    return compileOrWatch(src, dst);
+    compileOrWatch(src, dst);
   };
 
   /**
@@ -72,12 +70,12 @@ export const reload = () => {
    * Language-specific index documents.
    */
   LANGS.forEach((lang) => {
-    const langIndexSrc = `content/${lang}/index.typ`;
-    const fallbackIndexSrc = `content/${FALLBACK_LANG}/index.typ`;
+    const langIndexSrc = `content/index.${lang}.typ`;
+    const fallbackIndexSrc = `content/index.${FALLBACK_LANG}.typ`;
     const indexSrc = fs.existsSync(langIndexSrc)
       ? langIndexSrc
       : fallbackIndexSrc;
-    const indexDst = `dist/${lang}/index.html`;
+    const indexDst = toDist(indexSrc);
     compileOrWatch(indexSrc, indexDst);
   });
   /**

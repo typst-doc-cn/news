@@ -1,4 +1,4 @@
-#import "/typ/templates/news.typ": news-template
+#import "/typ/templates/news.typ": link-news, news-template
 
 #show: news-template.with(
   date: "2025-11-07",
@@ -8,16 +8,6 @@
   description: "We recently updated the document to v0.14.0.",
 )
 
-#let news-link(dest, body) = context if target() == "html" {
-  // template.typ uses HTML features, which are not supported by typst.ts compiler.query(…).
-  // Therefore, we have to make this import conditional.
-  import "/typ/templates/template.typ": news-link
-  link(news-link(dest), body)
-} else {
-  "Placeholder for "
-  repr((dest: dest, body: body))
-}
-
 #set heading(numbering: (..nums) => numbering("1.1", ..nums.pos().slice(1)))
 
 Hello typst authors and developers!
@@ -25,7 +15,7 @@ Hello typst authors and developers!
 We recently updated
 #link("https://typst-doc-cn.github.io/clreq/")[_Chinese Layout Gap Analysis (clreq-gap) for Typst_]
 to v0.14.0. As
-#news-link("content/en/news/2025-06/gap.typ")[introduced before],
+#link-news("content/news/2025-06/gap.en.typ")[introduced before],
 this is a document describing gaps or shortcomings in typst for the
 support of the Chinese script, including text layout and bibliography.
 
@@ -154,7 +144,7 @@ can now be loaded by new Typst, after removing non-standard elements.
 )[Citation numbers are no longer flying over their brackets]
 
 As
-#news-link("content/en/news/2025-06/gap.typ#:~:text=is%20too%20wide-,Invisible%20issues,-Moreover%2C%20I%20think")[mentioned in the previous post],
+#link-news("content/news/2025-06/gap.en.typ#:~:text=is%20too%20wide-,Invisible%20issues,-Moreover%2C%20I%20think")[mentioned in the previous post],
 the Chinese convention for citation numbers is `[1]`. In Typst v0.13.1,
 `1` may fly over `[]`, and the severity depends on the specific
 configuration.
