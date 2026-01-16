@@ -9,7 +9,7 @@
   description: "Typst 0.13.0, RC 1 版本发布了.",
 )
 
-Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://staging.typst.app/docs/changelog/0.13.0", "这里").
+Typst 0.13.0, RC 1 版本发布了. changelog 见 #link("https://typst.app/docs/changelog/0.13.0", "这里").
 
 #if not is-meta [
   以下是一份中文的简要更新日志:
