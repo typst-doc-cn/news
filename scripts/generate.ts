@@ -163,7 +163,7 @@ const generateRssFeed = (
       .join("")}
   </channel>
 </rss>`;
-  fs.mkdirSync("dist/news", { recursive: true });
+  fs.mkdirSync("dist", { recursive: true });
   fs.writeFileSync("dist/feed.xml", rssFeed);
 };
 

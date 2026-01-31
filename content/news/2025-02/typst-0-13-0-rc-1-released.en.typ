@@ -9,4 +9,4 @@
   description: "Typst 0.13.0, RC 1 was released.",
 )
 
-Typst 0.13.0, RC 1 was releases. #link("https://staging.typst.app/docs/changelog/0.13.0", "Changelog").
+Typst 0.13.0, RC 1 was releases. #link("https://typst.app/docs/changelog/0.13.0", "Changelog").
