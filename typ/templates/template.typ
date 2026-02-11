@@ -169,7 +169,7 @@
   html.div(
     class: "main-footer",
     {
-      "© 2023-2025 "
+      "© 2023-2026 "
       html.a(class: "text-link", { "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
       " All Rights Reserved. "
       "Powered by "
