@@ -1,4 +1,4 @@
-#import "/typ/templates/template.typ": base-template, news-link
+#import "/typ/templates/template.typ": base-template, news-url
 
 #let main-title(title, description) = {
   html.div(
@@ -31,7 +31,7 @@
     lang,
     default: item.content.en,
   )
-  let href = news-link(href)
+  let href = news-url(href)
 
   add-rss-feed((
     kind: "news-item",

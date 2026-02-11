@@ -59,10 +59,10 @@
     "en"
   }
 
-  import "/typ/templates/template.typ": base-template, current-title, news-link
+  import "/typ/templates/template.typ": base-template, current-title, news-url
   base-template(
     pre-header: current-title.update(title),
-    go-back: news-link("content/index." + locale + ".typ"),
+    go-back: news-url("content/index." + locale + ".typ"),
     {
       html.style(
         // 48rem is from tailwindcss, the medium breakpoint.
@@ -118,13 +118,13 @@
 /// #link-news("content/news/2025-06/gap.en.typ")[another page]
 /// ```
 #let link-news(dest, body) = if not is-meta {
-  import "/typ/templates/template.typ": news-data, news-link
+  import "/typ/templates/template.typ": news-data, news-url
 
   let news-paths = news-data.map(n => n.content.values()).flatten()
   let path = dest.replace(regex("#.+$"), "")
   assert(news-paths.contains(path), message: "The destination of a link does not exist: " + dest)
 
-  link(news-link(dest), body)
+  link(news-url(dest), body)
 }
 
 #let _exp(left, right) = {

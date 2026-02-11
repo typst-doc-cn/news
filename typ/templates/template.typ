@@ -19,8 +19,8 @@
   news-data.find(item => title in item.title.values())
 }
 
-/// Converts a source path to a news link.
-#let news-link(src) = {
+/// Converts a source path to a news URL.
+#let news-url(src) = {
   let href = (url-base + to-dist(src)).replace(".typ", ".html")
   if x-is-light {
     href.replace(".html", ".light.html")
@@ -94,7 +94,7 @@
           html.frame(
             tiaoma.qrcode({
               "https://typst-doc-cn.github.io"
-              news-link(goal-href)
+              news-url(goal-href)
             }),
           )
         }
@@ -126,7 +126,7 @@
 
       let goal-href = item.content.at(next-locale)
       if goal-href != none {
-        html.a(class: "top-text-button", title: "Switch Language", href: news-link(goal-href), locale)
+        html.a(class: "top-text-button", title: "Switch Language", href: news-url(goal-href), locale)
       }
     }
   }
