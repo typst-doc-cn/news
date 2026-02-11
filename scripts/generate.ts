@@ -4,16 +4,16 @@ import { dirname } from "node:path";
 import { siteUrl } from "./args.ts";
 import { typstQuery } from "./compile.ts";
 import { extract, FALLBACK_LANG, LANGS } from "./i18n.ts";
-import { toDist } from "./route.ts";
-import type { FileMeta, I18n, NewsMeta } from "./types";
+import { asRel, toDist } from "./route.ts";
+import type { ContentPath, FileMeta, I18n, NewsMeta } from "./types.ts";
 
 const NEWS_PATH_PATTERN =
   /^(?<id>\d{4}-\d{2}\/.+)\.(?<lang>[a-z]{2}(?:-[A-Z]{2})?)\.typ$/;
 
 /** A pair of redirect paths */
 interface RedirectPair {
-  from: string;
-  to: string;
+  from: ContentPath;
+  to: ContentPath;
 }
 
 /**
@@ -24,7 +24,7 @@ interface RedirectPair {
 export const generateNewsList = (siteUrl: string): NewsMeta[] => {
   const i18nFileMeta: Record<
     string,
-    I18n<Omit<FileMeta, "redirect-from"> & { content: string }>
+    I18n<Omit<FileMeta, "redirect-from"> & { content: ContentPath; }>
   > = {};
   const redirects: RedirectPair[] = [];
 
@@ -32,7 +32,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
     const newsDir = `content/news`;
     const monthsList: string[] = fs.readdirSync(newsDir);
     const newsList = monthsList.reduce<
-      { path: string; lang: string; id: string }[]
+      { path: ContentPath; lang: string; id: string; }[]
     >((acc, month) => {
       const monthPath = `${newsDir}/${month}`;
       const news = fs
@@ -46,7 +46,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
             throw new Error(`Failed to parse a news path: ${newsPath}`);
           }
           const { lang, id } = m.groups;
-          return { path: `${newsDir}/${newsPath}`, lang, id };
+          return { path: `/${newsDir}/${newsPath}` as ContentPath, lang, id };
         });
       return [...acc, ...news];
     }, []);
@@ -66,7 +66,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
 
       for (const { path, lang } of newsLangs) {
         const { "redirect-from": redirectFrom, ...fileMeta } =
-          typstQuery(path, "<front-matter>", true)!.value;
+          typstQuery(asRel(path), "<front-matter>", true)!.value;
         if (!i18nFileMeta[id]) {
           // @ts-ignore: This type error will be fixed after the for-loop is finished.
           i18nFileMeta[id] = {};
@@ -138,7 +138,7 @@ const generateRssFeed = (
   newsListJson: NewsMeta[],
   i18nFileMeta: Record<
     string,
-    I18n<Pick<FileMeta, "title" | "description"> & { content: string }>
+    I18n<Pick<FileMeta, "title" | "description"> & { content: ContentPath; }>
   >,
 ): void => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>

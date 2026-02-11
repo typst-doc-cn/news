@@ -1,9 +1,7 @@
 #import "@preview/tiaoma:0.3.0"
 #import "@preview/zebraw:0.6.1": zebraw, zebraw-init
-#import "/typ/packages/html-toolkit.typ": (
-  asset-url, div-frame, load-html-template, preload-css, url-base, x-is-dark, x-is-light,
-)
-#import "route.typ": to-dist
+#import "/typ/packages/html-toolkit.typ": div-frame, load-html-template, preload-css
+#import "/typ/route.typ": asset-url, news-url, x-is-dark, x-is-light
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -17,16 +15,6 @@
 #let news-item() = {
   let title = current-title.get()
   news-data.find(item => title in item.title.values())
-}
-
-/// Converts a source path to a news URL.
-#let news-url(src) = {
-  let href = (url-base + to-dist(src)).replace(".typ", ".html")
-  if x-is-light {
-    href.replace(".html", ".light.html")
-  } else {
-    href
-  }
 }
 
 /// A font-awesome icon.
