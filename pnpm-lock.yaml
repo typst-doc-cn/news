@@ -15,8 +15,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^25.2.0
+        version: 25.2.0
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -102,8 +102,8 @@ packages:
   '@types/glob-watcher@5.0.5':
     resolution: {integrity: sha512-79p9NNg/3mWMdQ0+OHdV0Yyge8BxhiYAHnVZ/Zz7/DO488osdI9Md9nNPQafAhNTwO0Hp/L8DwGrTG827r5V4g==}
 
-  '@types/node@24.10.4':
-    resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
+  '@types/node@25.2.0':
+    resolution: {integrity: sha512-DZ8VwRFUNzuqJ5khrvwMXHmvPe+zGayJhr2CDNiKB1WBE1ST8Djl00D0IC4vvNmHMdj6DlbYRIaFE7WHjlDl5w==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -340,9 +340,9 @@ snapshots:
 
   '@types/glob-watcher@5.0.5':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.2.0
 
-  '@types/node@24.10.4':
+  '@types/node@25.2.0':
     dependencies:
       undici-types: 7.16.0
 
