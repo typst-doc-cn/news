@@ -30,7 +30,7 @@ jobs:
             base: "https://typst.dev/news/"
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           submodules: recursive
       - uses: pnpm/action-setup@v4
