@@ -9,8 +9,10 @@ pnpm install
 ## 构建（Build）
 
 ```bash
-pnpm run build --url-base=/news/
+pnpm run build
 ```
+
+此命令可设置网站 base URL，默认设置相当于`--base https://typst-doc-cn.github.io/news/`。该设置必须是完整URL，因为会用于生成RSS和二维码；而且必须以`/`结尾，以保证相对链接能正确转换。
 
 ## 持续构建（Watch）
 

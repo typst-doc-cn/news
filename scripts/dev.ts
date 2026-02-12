@@ -3,7 +3,7 @@ import { concurrently } from "concurrently";
 concurrently([
   {
     name: "build",
-    command: "npm run build -- --dev --url-base=/news/",
+    command: "npm run build -- --dev --base http://localhost:3000/news/",
   },
   {
     name: "serve",

@@ -1,3 +1,5 @@
+#import "@preview/lure:0.2.0" as _lure
+
 /// The target for the HTML export.
 ///
 /// Available targets:
@@ -10,14 +12,16 @@
 /// Whether the target uses a light theme.
 #let x-is-light = _x-target.ends-with("light")
 
-/// CLI sets the `x-url-base` to the base URL for assets. This is needed if you host the website on the github pages.
+/// The URL base for the project website, including the origin and the base path.
 ///
-/// For example, if you host the website on `https://username.github.io/project/`, you should set `x-url-base` to `/project/`.
+/// This parameter is set from CLI. See `scripts/args.ts` for explanation.
+#let _site-url-base = sys.inputs.at("x-site-url-base", default: "https://typst-doc-cn.github.io/news/")
+
 /// The base URL for content and assets.
-#let _url-base = sys.inputs.at("x-url-base", default: "/")
+#let _base-path = _lure.parse(_site-url-base).path
 #assert(
-  _url-base.starts-with("/") and _url-base.ends-with("/"),
-  message: "x-url-base should start and end with `/`, got " + repr(_url-base),
+  _base-path.starts-with("/") and _base-path.ends-with("/"),
+  message: "URL base path should start and end with `/`, got " + repr(_base-path),
 )
 
 /// Convert a news path in `content/…/*.typ` to the URL relative to the base without the leading slash.
@@ -56,7 +60,7 @@
 /// Converts a source path to a news URL.
 #let news-url(src) = {
   assert(src.starts-with("/content/"), message: "expect `/content/*`, got " + repr(src))
-  let href = _url-base + _to-dist(src)
+  let href = _base-path + _to-dist(src)
   if x-is-light {
     href.replace(".html", ".light.html")
   } else {
@@ -70,5 +74,8 @@
 /// -> str
 #let asset-url(path) = {
   assert(path.starts-with("/assets/"), message: "expect `/assets/*`, got " + repr(path))
-  _url-base + path.slice(1)
+  _base-path + path.slice(1)
 }
+
+/// Converts a relative URL to an absolute URL with the origin.
+#let make-absolute(url) = _lure.join(_site-url-base, url)

@@ -35,7 +35,7 @@ jobs:
         uses: actions/configure-pages@v5
         id: pages
       - name: Build
-        run: pnpm run build -- --url-base=${{ steps.pages.outputs.base_path }}/
+        run: pnpm run build --base ${{ steps.pages.outputs.base_url }}/
       - name: Copy Static Assets
         run: cp -r ./assets/ ./dist
       - name: Upload artifact

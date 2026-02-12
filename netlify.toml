@@ -1,7 +1,7 @@
 [build]
 command = """
 pnpm install && \
-pnpm run build -- --url-base=/ --site-url=$DEPLOY_URL && \
+pnpm run build --base $DEPLOY_URL/ && \
 cp -r ./assets/ ./dist
 """
 # $DEPLOY_URL is set by netlify: https://docs.netlify.com/build/configure-builds/environment-variables/#deploy-urls-and-metadata

@@ -1,7 +1,7 @@
 import watch from "glob-watcher";
 import fs from "node:fs";
 import { dirname } from "node:path";
-import { isDev, siteUrl } from "./args.ts";
+import { isDev, siteUrlBase } from "./args.ts";
 import { compileOrWatch, hasError, watcher } from "./compile.ts";
 import { generateNewsList } from "./generate.ts";
 import { FALLBACK_LANG, LANGS } from "./i18n.ts";
@@ -45,7 +45,7 @@ export const reload = (): void => {
   // Kills the previous watches
   watcher().clear();
   // Gets all the news
-  const meta = generateNewsList(siteUrl);
+  const meta = generateNewsList(siteUrlBase);
 
   /**
    * Watches a regular typst document.

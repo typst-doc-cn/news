@@ -1,7 +1,7 @@
 #import "@preview/tiaoma:0.3.0"
 #import "@preview/zebraw:0.6.1": zebraw, zebraw-init
 #import "/typ/packages/html-toolkit.typ": div-frame, load-html-template, preload-css
-#import "/typ/route.typ": asset-url, news-url, x-is-dark, x-is-light
+#import "/typ/route.typ": asset-url, make-absolute, news-url, x-is-dark, x-is-light
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -73,18 +73,16 @@
       lang
     }
 
-    let goal-href = item.content.at(locale)
-    if goal-href != none {
+    let goal-path = item.content.at(locale)
+    if goal-path != none {
+      let goal-url = make-absolute(news-url(goal-path))
       fa-icon(
         "/assets/fa-qr-code.svg",
         class: "qr-code-button",
         content: html.div(
           class: "qr-code-content",
           html.frame(
-            tiaoma.qrcode({
-              "https://typst-doc-cn.github.io"
-              news-url(goal-href)
-            }),
+            tiaoma.qrcode(goal-url),
           ),
         ),
       )
