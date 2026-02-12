@@ -1,30 +1,30 @@
 import { groupBy } from "es-toolkit/array";
 import fs from "node:fs";
 import { dirname } from "node:path";
-import { siteUrl } from "./args.ts";
+import { siteUrlBase, type SiteUrlBase } from "./args.ts";
 import { typstQuery } from "./compile.ts";
 import { extract, FALLBACK_LANG, LANGS } from "./i18n.ts";
-import { toDist } from "./route.ts";
-import type { FileMeta, I18n, NewsMeta } from "./types";
+import { asRel, toDist } from "./route.ts";
+import type { ContentPath, FileMeta, I18n, NewsMeta } from "./types.ts";
 
 const NEWS_PATH_PATTERN =
   /^(?<id>\d{4}-\d{2}\/.+)\.(?<lang>[a-z]{2}(?:-[A-Z]{2})?)\.typ$/;
 
 /** A pair of redirect paths */
 interface RedirectPair {
-  from: string;
-  to: string;
+  from: ContentPath;
+  to: ContentPath;
 }
 
 /**
  * todo: looks quite ugly, need to refactor
  *
- * @param siteUrl The base URL of the website
+ * @param siteUrlBase The base URL of the website
  */
-export const generateNewsList = (siteUrl: string): NewsMeta[] => {
+export const generateNewsList = (siteUrlBase: SiteUrlBase): NewsMeta[] => {
   const i18nFileMeta: Record<
     string,
-    I18n<Omit<FileMeta, "redirect-from"> & { content: string }>
+    I18n<Omit<FileMeta, "redirect-from"> & { content: ContentPath; }>
   > = {};
   const redirects: RedirectPair[] = [];
 
@@ -32,7 +32,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
     const newsDir = `content/news`;
     const monthsList: string[] = fs.readdirSync(newsDir);
     const newsList = monthsList.reduce<
-      { path: string; lang: string; id: string }[]
+      { path: ContentPath; lang: string; id: string; }[]
     >((acc, month) => {
       const monthPath = `${newsDir}/${month}`;
       const news = fs
@@ -46,7 +46,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
             throw new Error(`Failed to parse a news path: ${newsPath}`);
           }
           const { lang, id } = m.groups;
-          return { path: `${newsDir}/${newsPath}`, lang, id };
+          return { path: `/${newsDir}/${newsPath}` as ContentPath, lang, id };
         });
       return [...acc, ...news];
     }, []);
@@ -66,7 +66,7 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
 
       for (const { path, lang } of newsLangs) {
         const { "redirect-from": redirectFrom, ...fileMeta } =
-          typstQuery(path, "<front-matter>", true)!.value;
+          typstQuery(asRel(path), "<front-matter>", true)!.value;
         if (!i18nFileMeta[id]) {
           // @ts-ignore: This type error will be fixed after the for-loop is finished.
           i18nFileMeta[id] = {};
@@ -120,8 +120,8 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
     JSON.stringify(newsListJson, null, 2)
   );
 
-  generateRssFeed(siteUrl, newsListJson, i18nFileMeta);
-  generateRedirects(siteUrl, redirects);
+  generateRssFeed(siteUrlBase, newsListJson, i18nFileMeta);
+  generateRedirects(siteUrlBase, redirects);
 
   return newsListJson;
 };
@@ -129,33 +129,35 @@ export const generateNewsList = (siteUrl: string): NewsMeta[] => {
 /**
  * Generates the RSS feed
  *
- * @param siteUrl The base URL of the website
+ * @param siteUrlBase The base URL of the website
  * @param newsListJson The news list JSON
  * @param i18nFileMeta The i18n file meta
  */
 const generateRssFeed = (
-  siteUrl: string,
+  siteUrlBase: SiteUrlBase,
   newsListJson: NewsMeta[],
   i18nFileMeta: Record<
     string,
-    I18n<Pick<FileMeta, "title" | "description"> & { content: string }>
+    I18n<Pick<FileMeta, "title" | "description"> & { content: ContentPath; }>
   >,
 ): void => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Typst CN News (unofficial)</title>
-    <link>${siteUrl}/</link>
+    <link>${siteUrlBase}</link>
+    <atom:link href="${siteUrlBase}feed.xml" rel="self" type="application/rss+xml" />
     <description>The recent changes about typst.</description>
     ${newsListJson
       .map((news) => {
         const en = news.content.en;
-        const dst = toDist(en).replace("dist/", "/");
+        const link = `${siteUrlBase}${toDist(en).slice("dist/".length)}`;
         const meta = i18nFileMeta?.[news.id]?.en;
         return `
       <item>
         <title>${meta.title}</title>
-        <link>${siteUrl}${dst}</link>
+        <link>${link}</link>
+        <guid>${link}</guid>
         <description>${meta.description}</description>
         <pubDate>${new Date(news.date).toUTCString()}</pubDate>
       </item>`;
@@ -167,10 +169,10 @@ const generateRssFeed = (
   fs.writeFileSync("dist/feed.xml", rssFeed);
 };
 
-function generateRedirects(siteUrl: string, redirects: RedirectPair[]): void {
+function generateRedirects(siteUrlBase: SiteUrlBase, redirects: RedirectPair[]): void {
   for (const { from, to } of redirects) {
     const srcPath = toDist(from);
-    const dstUrl = `${siteUrl}${toDist(to).replace("dist/", "/")}`;
+    const dstUrl = `${siteUrlBase}${toDist(to).slice("dist/".length)}`;
     const redirectContent = `<!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -194,5 +196,5 @@ function generateRedirects(siteUrl: string, redirects: RedirectPair[]): void {
 const thisName = import.meta.url.split("/").pop()!;
 
 if (process.argv[1].endsWith(thisName)) {
-  generateNewsList(siteUrl);
+  generateNewsList(siteUrlBase);
 }

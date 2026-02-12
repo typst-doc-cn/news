@@ -17,7 +17,7 @@
     "build": "node scripts/build.ts",
     "dev": "node scripts/dev.ts",
     "gen": "node scripts/generate.ts",
-    "serve": "npx http-server -p 14133 -o /dist/"
+    "serve": "node scripts/dev-server.ts"
   },
   "devDependencies": {
     "@myriaddreamin/typst-ts-node-compiler": "0.7.0-rc2",
@@ -25,7 +25,6 @@
     "@types/node": "^24.10.4",
     "concurrently": "^9.2.1",
     "es-toolkit": "^1.43.0",
-    "glob-watcher": "^6.0.0",
-    "http-server": "^14.1.1"
+    "glob-watcher": "^6.0.0"
   }
 }

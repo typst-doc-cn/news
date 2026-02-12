@@ -1,3 +1,6 @@
+#import "/typ/route.typ": asset-url, news-url, x-profile
+#import "/typ/packages/mirror-link.typ": mirror-link
+
 #let is-meta = sys.inputs.at("x-meta", default: none) != none
 
 /// Generate a short description for the content
@@ -59,10 +62,10 @@
     "en"
   }
 
-  import "/typ/templates/template.typ": base-template, current-title, news-link
+  import "/typ/templates/template.typ": base-template, current-title
   base-template(
     pre-header: current-title.update(title),
-    go-back: news-link("content/index." + locale + ".typ"),
+    go-back: news-url("/content/index." + locale + ".typ"),
     {
       html.style(
         // 48rem is from tailwindcss, the medium breakpoint.
@@ -103,10 +106,10 @@
           "Tags: " + tags.join(", ")
         },
       )
-      html.div(
-        class: "news-body",
-        content,
-      )
+      html.div(class: "news-body", {
+        show: mirror-link.with(profile: x-profile)
+        content
+      })
     },
   )
 }
@@ -115,17 +118,25 @@
 ///
 /// = Example
 /// ```typst
-/// #link-news("content/news/2025-06/gap.en.typ")[another page]
+/// #link-news("/content/news/2025-06/gap.en.typ")[another page]
 /// ```
 #let link-news(dest, body) = if not is-meta {
-  import "/typ/templates/template.typ": news-data, news-link
+  import "/typ/templates/template.typ": news-data
 
   let news-paths = news-data.map(n => n.content.values()).flatten()
   let path = dest.replace(regex("#.+$"), "")
   assert(news-paths.contains(path), message: "The destination of a link does not exist: " + dest)
 
-  link(news-link(dest), body)
+  link(news-url(dest), body)
 }
+
+/// Create a link to an asset
+///
+/// = Example
+/// ```typst
+/// #link-asset("/assets/brief-changelog-v0.14.0-rc1.pdf")[非官方中文更新日志（PDF）]
+/// ```
+#let link-asset(dest, body) = link(asset-url(dest), body)
 
 #let _exp(left, right) = {
   if is-meta {

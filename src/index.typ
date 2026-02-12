@@ -1,15 +1,15 @@
-#import "/typ/packages/html-toolkit.typ": url-base
+#import "/typ/route.typ": news-url
 
 #let js = ```javascript
 document.addEventListener("DOMContentLoaded", function() {
   let lang = window.navigator.userLanguage || window.navigator.language;
   if (lang.startsWith("zh")) {
-    window.location.href = `{{prefix}}zh-CN/`;
+    window.location.href = `{{index.zh-CN}}`;
   } else {
-    window.location.href = `{{prefix}}en/`;
+    window.location.href = `{{index.en}}`;
   }
 });
-```
+```.text
 
 #html.elem(
   "html",
@@ -19,7 +19,11 @@ document.addEventListener("DOMContentLoaded", function() {
   ),
   {
     html.head(
-      html.script(js.text.replace("{{prefix}}", url-base)),
+      html.script(
+        js
+          .replace("{{index.zh-CN}}", news-url("/content/index.zh-CN.typ"))
+          .replace("{{index.en}}", news-url("/content/index.en.typ")),
+      ),
     )
     html.body(html.h1("Redirecting..."))
   },

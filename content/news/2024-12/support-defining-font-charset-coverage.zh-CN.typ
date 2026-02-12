@@ -10,7 +10,7 @@
   description: "此 PR 支持了定义字体覆盖的字符集。",
   redirect-from: (
    // coverage was misspelled previously
-    "content/news/2024-12/support-defining-font-charset-converage.zh-CN.typ",
+    "/content/news/2024-12/support-defining-font-charset-converage.zh-CN.typ",
   ),
 )
 

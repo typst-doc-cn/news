@@ -8,7 +8,7 @@
   description: "This PR adds support for defining character sets covered by fonts.",
   redirect-from: (
     // coverage was misspelled previously
-    "content/news/2024-12/support-defining-font-charset-converage.en.typ",
+    "/content/news/2024-12/support-defining-font-charset-converage.en.typ",
   ),
 )
 

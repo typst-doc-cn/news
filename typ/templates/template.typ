@@ -1,9 +1,7 @@
 #import "@preview/tiaoma:0.3.0"
 #import "@preview/zebraw:0.6.1": zebraw, zebraw-init
-#import "/typ/packages/html-toolkit.typ": (
-  asset-url, div-frame, load-html-template, preload-css, url-base, x-is-dark, x-is-light,
-)
-#import "route.typ": to-dist
+#import "/typ/packages/html-toolkit.typ": div-frame, load-html-template, preload-css
+#import "/typ/route.typ": asset-url, make-absolute, news-url, x-is-dark, x-is-light
 
 /// All metadata of news content.
 #let news-data = json(bytes(read("/content/meta/news-list.json")))
@@ -17,16 +15,6 @@
 #let news-item() = {
   let title = current-title.get()
   news-data.find(item => title in item.title.values())
-}
-
-/// Converts a source path to a news link.
-#let news-link(src) = {
-  let href = (url-base + to-dist(src)).replace(".typ", ".html")
-  if x-is-light {
-    href.replace(".html", ".light.html")
-  } else {
-    href
-  }
 }
 
 /// A font-awesome icon.
@@ -71,37 +59,36 @@
 }
 
 /// A QR code button.
-#let qrcode-button = fa-icon(
-  "/assets/fa-qr-code.svg",
-  class: "qr-code-button",
-  content: html.div(
-    class: "qr-code-content",
-    context {
-      let item = news-item()
+/// Returns `none` if unavailable (e.g., on the main index page).
+#let qrcode-button = context {
+  let item = news-item()
 
-      if item != none {
-        let lang = text.lang
-        let region = text.region
+  if item != none {
+    let lang = text.lang
+    let region = text.region
 
-        let locale = if region != none {
-          lang + "-" + region
-        } else {
-          lang
-        }
+    let locale = if region != none {
+      lang + "-" + region
+    } else {
+      lang
+    }
 
-        let goal-href = item.content.at(locale)
-        if goal-href != none {
+    let goal-path = item.content.at(locale)
+    if goal-path != none {
+      let goal-url = make-absolute(news-url(goal-path))
+      fa-icon(
+        "/assets/fa-qr-code.svg",
+        class: "qr-code-button",
+        content: html.div(
+          class: "qr-code-content",
           html.frame(
-            tiaoma.qrcode({
-              "https://typst-doc-cn.github.io"
-              news-link(goal-href)
-            }),
-          )
-        }
-      }
-    },
-  ),
-)
+            tiaoma.qrcode(goal-url),
+          ),
+        ),
+      )
+    }
+  }
+}
 
 /// A locale switch button.
 #let locale-button = context {
@@ -126,7 +113,7 @@
 
       let goal-href = item.content.at(next-locale)
       if goal-href != none {
-        html.a(class: "top-text-button", title: "Switch Language", href: news-link(goal-href), locale)
+        html.a(class: "top-text-button", title: "Switch Language", href: news-url(goal-href), locale)
       }
     }
   }
@@ -169,7 +156,7 @@
   html.div(
     class: "main-footer",
     {
-      "© 2023-2025 "
+      "© 2023-2026 "
       html.a(class: "text-link", { "Myriad-Dreamin." }, href: "https://github.com/Myriad-Dreamin")
       " All Rights Reserved. "
       "Powered by "

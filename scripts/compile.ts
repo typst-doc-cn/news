@@ -1,11 +1,11 @@
-import fs from "fs";
 import {
   NodeCompiler,
   ProjectWatcher,
   type CompileArgs,
   type NodeTypstProject,
 } from "@myriaddreamin/typst-ts-node-compiler";
-import { isDev, urlBase } from "./args.ts";
+import fs from "node:fs";
+import { isDev, mirrorProfile, siteUrlBase } from "./args.ts";
 import type { FileMetaElem } from "./types.ts";
 
 /**
@@ -20,7 +20,8 @@ const compileArgs: CompileArgs = {
   workspace: ".",
   inputs: {
     "x-target": "web-light",
-    ...(urlBase ? { "x-url-base": urlBase } : {}),
+    "x-site-url-base": siteUrlBase,
+    "x-profile": mirrorProfile,
   },
   fontArgs: [{ fontPaths: ["./assets/fonts", "./assets/typst-fonts"] }],
 };

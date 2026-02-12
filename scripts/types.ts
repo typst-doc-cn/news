@@ -6,13 +6,20 @@ export type I18n<T> = {
   [lang: string]: T,
 }
 
+/**
+ * Path to a content file.
+ * 
+ * The leading `/` stands for the project root.
+ */
+export type ContentPath = `/content/${string}`;
+
 export interface NewsMeta {
   id: string;
   date: string;
   /**
    * Path to content
    */
-  content: I18n<string>;
+  content: I18n<ContentPath>;
   description: I18n<string>;
   tags: I18n<string[]>;
   title: I18n<string>;
@@ -26,7 +33,7 @@ export interface FileMeta {
   description: string;
   tags: string[];
   title: string;
-  'redirect-from': string[];
+  "redirect-from": ContentPath[];
 }
 
 export type FileMetaElem = {
