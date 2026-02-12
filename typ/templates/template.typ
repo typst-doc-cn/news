@@ -59,37 +59,38 @@
 }
 
 /// A QR code button.
-#let qrcode-button = fa-icon(
-  "/assets/fa-qr-code.svg",
-  class: "qr-code-button",
-  content: html.div(
-    class: "qr-code-content",
-    context {
-      let item = news-item()
+/// Returns `none` if unavailable (e.g., on the main index page).
+#let qrcode-button = context {
+  let item = news-item()
 
-      if item != none {
-        let lang = text.lang
-        let region = text.region
+  if item != none {
+    let lang = text.lang
+    let region = text.region
 
-        let locale = if region != none {
-          lang + "-" + region
-        } else {
-          lang
-        }
+    let locale = if region != none {
+      lang + "-" + region
+    } else {
+      lang
+    }
 
-        let goal-href = item.content.at(locale)
-        if goal-href != none {
+    let goal-href = item.content.at(locale)
+    if goal-href != none {
+      fa-icon(
+        "/assets/fa-qr-code.svg",
+        class: "qr-code-button",
+        content: html.div(
+          class: "qr-code-content",
           html.frame(
             tiaoma.qrcode({
               "https://typst-doc-cn.github.io"
               news-url(goal-href)
             }),
-          )
-        }
-      }
-    },
-  ),
-)
+          ),
+        ),
+      )
+    }
+  }
+}
 
 /// A locale switch button.
 #let locale-button = context {
