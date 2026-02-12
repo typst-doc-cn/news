@@ -62,7 +62,7 @@ jobs:
           path: "./dist"
       - name: Upload artifact
         if: ${{ matrix.mirror != 'default' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist-${{ matrix.mirror }}
           path: "./dist"
