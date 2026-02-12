@@ -1,4 +1,5 @@
-#import "/typ/route.typ": asset-url, news-url
+#import "/typ/route.typ": asset-url, news-url, x-profile
+#import "/typ/packages/mirror-link.typ": mirror-link
 
 #let is-meta = sys.inputs.at("x-meta", default: none) != none
 
@@ -105,10 +106,10 @@
           "Tags: " + tags.join(", ")
         },
       )
-      html.div(
-        class: "news-body",
-        content,
-      )
+      html.div(class: "news-body", {
+        show: mirror-link.with(profile: x-profile)
+        content
+      })
     },
   )
 }
@@ -130,7 +131,7 @@
 }
 
 /// Create a link to an asset
-/// 
+///
 /// = Example
 /// ```typst
 /// #link-asset("/assets/brief-changelog-v0.14.0-rc1.pdf")[非官方中文更新日志（PDF）]

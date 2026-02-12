@@ -1,5 +1,7 @@
 #import "@preview/lure:0.2.0" as _lure
 
+#let x-profile = sys.inputs.at("x-profile", default: "default")
+
 /// The target for the HTML export.
 ///
 /// Available targets:

@@ -12,7 +12,19 @@ pnpm install
 pnpm run build
 ```
 
-此命令可设置网站 base URL，默认设置相当于`--base https://typst-doc-cn.github.io/news/`。该设置必须是完整URL，因为会用于生成RSS和二维码；而且必须以`/`结尾，以保证相对链接能正确转换。
+此命令支持以下参数。
+
+- `--base BASE`
+
+  设置网站的 base URL，默认为`https://typst-doc-cn.github.io/news/`。
+  
+  `BASE`必须是完整URL，因为会用于生成RSS和二维码；而且必须以`/`结尾，以保证相对链接能正确转换。
+
+- `--mirror default|cloudflare|vercel|netlify`
+
+  选择将中文社区导航、教程、文档等站点的链接替换为哪个镜像，默认为`default`。
+
+  使用方法参考[镜像链接 | Typst 中文社区导航](https://typst.dev/guide/dev/mirror-link.html#使用方法)，但不会影响`--base`，而且不支持保持某个链接始终为原始 URL；具体替换规则见[`mirror-link.typ`](./typ/packages/mirror-link.typ)。
 
 ## 持续构建（Watch）
 

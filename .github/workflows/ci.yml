@@ -10,15 +10,17 @@ on:
 jobs:
   build:
     name: |
-      Build (${{ matrix.name }})
+      Build (${{ matrix.mirror }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
-          - name: default
+          - mirror: default
             base: "https://typst-doc-cn.github.io/news/"
-          - name: cloudflare
+          - mirror: cloudflare
             base: "https://news.typst.dev/"
+          - mirror: vercel
+            base: "https://typst.dev/news/"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -35,12 +37,12 @@ jobs:
         run: pnpm install
       - run: pnpm check-types
       - name: Build
-        run: pnpm run build --base ${{ matrix.base }}
+        run: pnpm run build --base ${{ matrix.base }} --mirror ${{ matrix.mirror }}
       - name: Copy Static Assets
         run: cp -r ./assets/ ./dist
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: |
-            dist-${{ matrix.name }}
+            dist-${{ matrix.mirror }}
           path: dist

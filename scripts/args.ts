@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 const { values: args } = parseArgs({
   args: argv.slice(2),
   strict: true,
-  options: { dev: { type: "boolean" }, base: { type: "string" } },
+  options: { dev: { type: "boolean" }, base: { type: "string" }, mirror: { type: "string" } },
 });
 
 /**
@@ -13,12 +13,15 @@ const { values: args } = parseArgs({
  */
 export const isDev = args.dev === true;
 
+/** The profile for mirror-link. */
+export const mirrorProfile = (args.mirror || "default") as 'default' | 'netlify' | 'cloudflare' | 'vercel';
+
 export type SiteUrlBase = `https://${string}/` | `http://${string}/`;
 
 function expectValidUrlBase(base: string): SiteUrlBase {
   assert(
     (base.startsWith("https://") || base.startsWith("http://")) &&
-      base.endsWith("/"),
+    base.endsWith("/"),
     "Site URL base must be an absolute http(s) URL ending with `/`",
   );
   return base as SiteUrlBase;
