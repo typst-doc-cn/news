@@ -1,0 +1,133 @@
+name: Build and deploy
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: |
+      Build (${{ matrix.mirror }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - mirror: default
+            # The default base will be determined automatically.
+          - mirror: cloudflare
+            base: "https://news.typst.dev/"
+          - mirror: vercel
+            base: "https://typst.dev/news/"
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install packages
+        run: pnpm install
+
+      - name: Setup Pages
+        if: ${{ matrix.mirror == 'default' }}
+        uses: actions/configure-pages@v5
+        id: pages
+      - name: Build
+        run: >-
+          pnpm run build
+          --base ${{ matrix.mirror == 'default' && format('{0}/', steps.pages.outputs.base_url) || matrix.base }}
+          --mirror ${{ matrix.mirror }}
+      - name: Copy Static Assets
+        run: cp -r ./assets/ ./dist
+
+      - name: Upload artifact
+        if: ${{ matrix.mirror == 'default' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./dist"
+      - name: Upload artifact
+        if: ${{ matrix.mirror != 'default' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.mirror }}
+          path: "./dist"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  deploy-cloudflare:
+    name: Deploy to Cloudflare Pages
+    needs: build
+    if: ${{ vars.CLOUDFLARE_ACCOUNT_ID != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-cloudflare
+          path: "./dist"
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: typst-doc-cn-news
+          directory: "./dist"
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-vercel:
+    name: Deploy to Vercel
+    needs: build
+    if: ${{ vars.ENABLE_VERCEL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-vercel
+          path: "./dist"
+      - name: Create .vercelignore
+        shell: bash
+        run: |
+          cat <<'EOF' > .vercelignore
+          /*
+          !dist
+          EOF
+      - name: Deploy to Vercel
+        env:
+          VERCEL_JSON: ${{ secrets.VERCEL_JSON }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          mkdir -p .vercel
+          echo $VERCEL_JSON > .vercel/project.json
+          npx vercel --prod --token $VERCEL_TOKEN
