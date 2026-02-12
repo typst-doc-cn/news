@@ -2,7 +2,7 @@
 
 #show: news-template.with(
   date: "2025-06-22",
-  title: "分析 Typst 与中文排版的差距。",
+  title: "分析 Typst 与中文排版的差距",
   lang: "zh",
   region: "CN",
   tags: ("gap",),
