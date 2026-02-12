@@ -70,9 +70,14 @@
 
 /// Converts the path to the asset to the URL.
 ///
-/// - path (str): The path to the asset, starting with `/assets/`.
+/// - path (str): The path to the asset, usually starting with `/assets/`.
 /// -> str
 #let asset-url(path) = {
+  if path == "/feed.xml" {
+    // Special case for RSS feed, which is generated outside `/assets/`.
+    return _base-path + "feed.xml"
+  }
+
   assert(path.starts-with("/assets/"), message: "expect `/assets/*`, got " + repr(path))
   _base-path + path.slice(1)
 }

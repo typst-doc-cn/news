@@ -142,20 +142,22 @@ const generateRssFeed = (
   >,
 ): void => {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Typst CN News (unofficial)</title>
     <link>${siteUrlBase}</link>
+    <atom:link href="${siteUrlBase}feed.xml" rel="self" type="application/rss+xml" />
     <description>The recent changes about typst.</description>
     ${newsListJson
       .map((news) => {
         const en = news.content.en;
-        const dst = toDist(en).slice("dist/".length);
+        const link = `${siteUrlBase}${toDist(en).slice("dist/".length)}`;
         const meta = i18nFileMeta?.[news.id]?.en;
         return `
       <item>
         <title>${meta.title}</title>
-        <link>${siteUrlBase}${dst}</link>
+        <link>${link}</link>
+        <guid>${link}</guid>
         <description>${meta.description}</description>
         <pubDate>${new Date(news.date).toUTCString()}</pubDate>
       </item>`;
