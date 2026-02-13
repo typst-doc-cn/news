@@ -8,13 +8,22 @@
 - Package 的更新。
 - Typst 及其相关工具版本的发布。
 
+## 站点
+
+如果您发现访问缓慢，可尝试切换站点。
+
+- 主站：[GitHub Pages](https://typst-doc-cn.github.io/news/)
+- 镜像站：[Cloudflare (news.typst.dev)](https://news.typst.dev)
+- 镜像站：[Vercel (typst.dev/news)](https://typst.dev/news/)
+- 测试站：[Netlify (zhtyp-news.netlify.app)](https://zhtyp-news.netlify.app/)
+
 ## RSS
 
 - [RSS in English](https://typst-doc-cn.github.io/news/feed.xml)
 
 ## 内容创作
 
-参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
+参阅 [CONTRIBUTING.md](./CONTRIBUTING.md)。
 
 ## 许可证
 
