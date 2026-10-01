@@ -98,12 +98,14 @@ jobs:
           name: dist-cloudflare
           path: "./dist"
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: typst-doc-cn-news
-          directory: "./dist"
+          command: >-
+            pages deploy
+            ./dist
+            --project-name=typst-doc-cn-news
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-vercel:
