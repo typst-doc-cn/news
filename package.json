@@ -25,6 +25,7 @@
     "@types/node": "^26.6.2",
     "concurrently": "^10.0.5",
     "es-toolkit": "^1.52.0",
-    "glob-watcher": "^6.0.0"
+    "glob-watcher": "^6.0.0",
+    "typescript": "^7.0.2"
   }
 }
